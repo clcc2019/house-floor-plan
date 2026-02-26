@@ -1,4 +1,7 @@
 __pycache__/
 *.pyc
 .DS_Store
-.cursor/
+
+# Ignore .cursor except skills
+.cursor/*
+!.cursor/skills/
