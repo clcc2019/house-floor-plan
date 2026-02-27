@@ -62,7 +62,7 @@ When modifying any drawing, follow these rules to maintain cross-drawing consist
 2. **Public-private separation** — LDK (living+dining+kitchen) open plan; bedrooms isolated
 3. **Wet-dry separation** — bathrooms with separated wash/toilet/shower zones
 4. **Every room has a door** — verify all rooms have proper entry/exit with correct swing direction
-5. **Elderly room on ground floor** — south-facing with en-suite, easy access
+5. **Elderly room on ground floor** — south-facing, easy access (uses shared bathroom)
 6. **Stairs alignment** — upper/lower floor stairwells must occupy the same XY footprint
 
 ## Workflow
@@ -84,7 +84,7 @@ When modifying any drawing, follow these rules to maintain cross-drawing consist
 ```
 Functional:
 - [ ] Every room has at least one door with correct swing direction
-- [ ] Master bedrooms have en-suite bathroom doors
+- [ ] Master bedroom 2 (2F) has en-suite bathroom door
 - [ ] Stairwell position matches between floors
 - [ ] Kitchen is adjacent to dining area
 - [ ] Corridor width ≥ 1.2m throughout

@@ -489,7 +489,7 @@ $SKPOLY
   9
 $TDCREATE
  40
-2461099.758900463
+2461099.793645833
   9
 $TDUCREATE
  40
@@ -497,7 +497,7 @@ $TDUCREATE
   9
 $TDUPDATE
  40
-2461099.758900463
+2461099.793645833
   9
 $TDUUPDATE
  40
@@ -549,7 +549,7 @@ $SPLINESEGS
   9
 $HANDSEED
   5
-66
+60
   9
 $SURFTAB1
  70
@@ -929,11 +929,11 @@ $PSTYLEMODE
   9
 $FINGERPRINTGUID
   2
-{9EF39E9E-8814-420B-86D8-F1813FA0AA7A}
+{E36302A5-5E82-4DD4-B43B-E7D711BDF281}
   9
 $VERSIONGUID
   2
-{469F0A48-1A3B-45F3-8AAC-CCCF6A9559DC}
+{8F99534D-8A50-4200-846E-1770925589F3}
   9
 $EXTNAMES
 290
@@ -1323,9 +1323,9 @@ ISM
   0
 CLASS
   1
-LAYOUT
+ACDBPLACEHOLDER
   2
-AcDbLayout
+AcDbPlaceHolder
   3
 ObjectDBX Classes
  90
@@ -1339,9 +1339,9 @@ ObjectDBX Classes
   0
 CLASS
   1
-ACDBPLACEHOLDER
+LAYOUT
   2
-AcDbPlaceHolder
+AcDbLayout
   3
 ObjectDBX Classes
  90
@@ -1603,7 +1603,7 @@ Continuous
   0
 LAYER
   5
-2F
+30
 330
 1
 100
@@ -1627,7 +1627,7 @@ Continuous
   0
 LAYER
   5
-30
+31
 330
 1
 100
@@ -1651,7 +1651,7 @@ Continuous
   0
 LAYER
   5
-31
+32
 330
 1
 100
@@ -1675,7 +1675,7 @@ Continuous
   0
 LAYER
   5
-32
+33
 330
 1
 100
@@ -1699,7 +1699,7 @@ Continuous
   0
 LAYER
   5
-33
+34
 330
 1
 100
@@ -1723,7 +1723,7 @@ Continuous
   0
 LAYER
   5
-34
+35
 330
 1
 100
@@ -1747,7 +1747,7 @@ Continuous
   0
 LAYER
   5
-35
+36
 330
 1
 100
@@ -1771,7 +1771,7 @@ Continuous
   0
 LAYER
   5
-36
+37
 330
 1
 100
@@ -1795,7 +1795,7 @@ Continuous
   0
 LAYER
   5
-37
+38
 330
 1
 100
@@ -1819,7 +1819,7 @@ Continuous
   0
 LAYER
   5
-38
+39
 330
 1
 100
@@ -1843,7 +1843,7 @@ Continuous
   0
 LAYER
   5
-39
+3A
 330
 1
 100
@@ -1867,7 +1867,7 @@ Continuous
   0
 LAYER
   5
-3A
+3B
 330
 1
 100
@@ -1891,7 +1891,7 @@ Continuous
   0
 LAYER
   5
-3B
+3C
 330
 1
 100
@@ -1915,7 +1915,7 @@ Continuous
   0
 LAYER
   5
-3C
+3D
 330
 1
 100
@@ -1939,7 +1939,7 @@ Continuous
   0
 LAYER
   5
-3D
+3E
 330
 1
 100
@@ -1963,7 +1963,7 @@ Continuous
   0
 LAYER
   5
-3E
+3F
 330
 1
 100
@@ -1987,7 +1987,7 @@ Continuous
   0
 LAYER
   5
-3F
+40
 330
 1
 100
@@ -2011,7 +2011,7 @@ Continuous
   0
 LAYER
   5
-40
+41
 330
 1
 100
@@ -2035,7 +2035,7 @@ Continuous
   0
 LAYER
   5
-41
+42
 330
 1
 100
@@ -2059,7 +2059,7 @@ Continuous
   0
 LAYER
   5
-42
+43
 330
 1
 100
@@ -2083,7 +2083,7 @@ Continuous
   0
 LAYER
   5
-43
+44
 330
 1
 100
@@ -2107,7 +2107,7 @@ Continuous
   0
 LAYER
   5
-44
+45
 330
 1
 100
@@ -2131,7 +2131,7 @@ Continuous
   0
 LAYER
   5
-45
+46
 330
 1
 100
@@ -2165,7 +2165,7 @@ STYLE
 100
 AcDbSymbolTable
  70
-1
+2
   0
 STYLE
   5
@@ -2194,6 +2194,40 @@ Standard
 txt
   4
 
+  0
+STYLE
+  5
+2F
+330
+5
+100
+AcDbSymbolTableRecord
+100
+AcDbTextStyleTableRecord
+  2
+CJK
+ 70
+0
+ 40
+0.0
+ 41
+1.0
+ 50
+0.0
+ 71
+0
+ 42
+2.5
+  3
+NotoSansCJK-Regular.ttc
+  4
+
+1001
+ACAD
+1000
+Noto Sans CJK SC
+1071
+34
   0
 ENDTAB
   0
@@ -2253,7 +2287,7 @@ ACAD
   0
 APPID
   5
-63
+5D
 330
 3
 100
@@ -2267,7 +2301,7 @@ HATCHBACKGROUNDCOLOR
   0
 APPID
   5
-64
+5E
 330
 3
 100
@@ -2577,7 +2611,7 @@ ENTITIES
   0
 HATCH
   5
-46
+47
 330
 17
 100
@@ -2646,46 +2680,6 @@ SOLID
 0
   0
 LWPOLYLINE
-  5
-47
-330
-17
-100
-AcDbEntity
-  8
-WALL
- 62
-250
-370
-50
-100
-AcDbPolyline
- 90
-5
- 70
-1
- 10
-0.0
- 20
-0.0
- 10
-14000.0
- 20
-0.0
- 10
-14000.0
- 20
-240.0
- 10
-0.0
- 20
-240.0
- 10
-0.0
- 20
-0.0
-  0
-HATCH
   5
 48
 330
@@ -2693,69 +2687,39 @@ HATCH
 100
 AcDbEntity
   8
-WALL-FILL
+WALL
  62
 250
+370
+50
 100
-AcDbHatch
- 10
-0.0
- 20
-0.0
- 30
-0.0
-210
-0.0
-220
-0.0
-230
-1.0
-  2
-SOLID
+AcDbPolyline
+ 90
+5
  70
 1
- 71
-0
- 91
-1
- 92
-3
- 72
-0
- 73
-1
- 93
-5
  10
 0.0
  20
-10760.0
+0.0
  10
 14000.0
  20
-10760.0
+0.0
  10
 14000.0
  20
-11000.0
+240.0
  10
 0.0
  20
-11000.0
+240.0
  10
 0.0
  20
-10760.0
- 97
-0
- 75
-0
- 76
-1
- 98
-0
+0.0
   0
-LWPOLYLINE
+HATCH
   5
 49
 330
@@ -2763,17 +2727,39 @@ LWPOLYLINE
 100
 AcDbEntity
   8
-WALL
+WALL-FILL
  62
 250
-370
-50
 100
-AcDbPolyline
- 90
-5
+AcDbHatch
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+210
+0.0
+220
+0.0
+230
+1.0
+  2
+SOLID
  70
 1
+ 71
+0
+ 91
+1
+ 92
+3
+ 72
+0
+ 73
+1
+ 93
+5
  10
 0.0
  20
@@ -2794,8 +2780,16 @@ AcDbPolyline
 0.0
  20
 10760.0
+ 97
+0
+ 75
+0
+ 76
+1
+ 98
+0
   0
-HATCH
+LWPOLYLINE
   5
 4A
 330
@@ -2803,6 +2797,46 @@ HATCH
 100
 AcDbEntity
   8
+WALL
+ 62
+250
+370
+50
+100
+AcDbPolyline
+ 90
+5
+ 70
+1
+ 10
+0.0
+ 20
+10760.0
+ 10
+14000.0
+ 20
+10760.0
+ 10
+14000.0
+ 20
+11000.0
+ 10
+0.0
+ 20
+11000.0
+ 10
+0.0
+ 20
+10760.0
+  0
+HATCH
+  5
+4B
+330
+17
+100
+AcDbEntity
+  8
 WALL-FILL
  62
 250
@@ -2867,7 +2901,7 @@ SOLID
   0
 LWPOLYLINE
   5
-4B
+4C
 330
 17
 100
@@ -2907,7 +2941,7 @@ AcDbPolyline
   0
 HATCH
   5
-4C
+4D
 330
 17
 100
@@ -2977,7 +3011,7 @@ SOLID
   0
 LWPOLYLINE
   5
-4D
+4E
 330
 17
 100
@@ -3017,7 +3051,7 @@ AcDbPolyline
   0
 LWPOLYLINE
   5
-4E
+4F
 330
 17
 100
@@ -3042,32 +3076,6 @@ AcDbPolyline
 8500.0
  10
 6200.0
- 20
-9500.0
-  0
-LWPOLYLINE
-  5
-4F
-330
-17
-100
-AcDbEntity
-  8
-PIPE-SUPPLY
- 62
-5
-100
-AcDbPolyline
- 90
-2
- 70
-0
- 10
-9000.0
- 20
-8500.0
- 10
-9000.0
  20
 9500.0
   0
@@ -3149,38 +3157,6 @@ AcDbPolyline
  70
 0
  10
-9200.0
- 20
-9000.0
- 10
-13500.0
- 20
-9000.0
- 10
-13500.0
- 20
-200.0
-  0
-LWPOLYLINE
-  5
-53
-330
-17
-100
-AcDbEntity
-  8
-PIPE-DRAIN
-  6
-DASHED
- 62
-42
-100
-AcDbPolyline
- 90
-3
- 70
-0
- 10
 12000.0
  20
 7200.0
@@ -3195,7 +3171,7 @@ AcDbPolyline
   0
 LWPOLYLINE
   5
-54
+53
 330
 17
 100
@@ -3223,39 +3199,9 @@ AcDbPolyline
  20
 9500.0
   0
-LWPOLYLINE
-  5
-55
-330
-17
-100
-AcDbEntity
-  8
-PIPE-HOT
- 62
-1
-100
-AcDbPolyline
- 90
-3
- 70
-0
- 10
-9000.0
- 20
-8500.0
- 10
-9200.0
- 20
-8500.0
- 10
-9200.0
- 20
-9500.0
-  0
 CIRCLE
   5
-56
+54
 330
 17
 100
@@ -3277,7 +3223,7 @@ AcDbCircle
   0
 TEXT
   5
-57
+55
 330
 17
 100
@@ -3298,12 +3244,74 @@ AcDbText
 120.0
   1
 主卫2给水
+  7
+CJK
  72
 1
  11
 6200.0
  21
 9300.0
+ 31
+0.0
+100
+AcDbText
+ 73
+2
+  0
+CIRCLE
+  5
+56
+330
+17
+100
+AcDbEntity
+  8
+FIXTURE
+ 62
+5
+100
+AcDbCircle
+ 10
+11800.0
+ 20
+7000.0
+ 30
+0.0
+ 40
+80.0
+  0
+TEXT
+  5
+57
+330
+17
+100
+AcDbEntity
+  8
+TEXT
+ 62
+250
+100
+AcDbText
+ 10
+11800.0
+ 20
+6800.0
+ 30
+0.0
+ 40
+120.0
+  1
+公卫给水
+  7
+CJK
+ 72
+1
+ 11
+11800.0
+ 21
+6800.0
  31
 0.0
 100
@@ -3325,9 +3333,9 @@ FIXTURE
 100
 AcDbCircle
  10
-9000.0
+5900.0
  20
-9500.0
+9000.0
  30
 0.0
  40
@@ -3347,21 +3355,23 @@ TEXT
 100
 AcDbText
  10
-9000.0
+5900.0
  20
-9300.0
+8800.0
  30
 0.0
  40
 120.0
   1
-主卧3给水
+主卫2排水
+  7
+CJK
  72
 1
  11
-9000.0
+5900.0
  21
-9300.0
+8800.0
  31
 0.0
 100
@@ -3383,180 +3393,6 @@ FIXTURE
 100
 AcDbCircle
  10
-11800.0
- 20
-7000.0
- 30
-0.0
- 40
-80.0
-  0
-TEXT
-  5
-5B
-330
-17
-100
-AcDbEntity
-  8
-TEXT
- 62
-250
-100
-AcDbText
- 10
-11800.0
- 20
-6800.0
- 30
-0.0
- 40
-120.0
-  1
-公卫给水
- 72
-1
- 11
-11800.0
- 21
-6800.0
- 31
-0.0
-100
-AcDbText
- 73
-2
-  0
-CIRCLE
-  5
-5C
-330
-17
-100
-AcDbEntity
-  8
-FIXTURE
- 62
-5
-100
-AcDbCircle
- 10
-5900.0
- 20
-9000.0
- 30
-0.0
- 40
-80.0
-  0
-TEXT
-  5
-5D
-330
-17
-100
-AcDbEntity
-  8
-TEXT
- 62
-250
-100
-AcDbText
- 10
-5900.0
- 20
-8800.0
- 30
-0.0
- 40
-120.0
-  1
-主卫2排水
- 72
-1
- 11
-5900.0
- 21
-8800.0
- 31
-0.0
-100
-AcDbText
- 73
-2
-  0
-CIRCLE
-  5
-5E
-330
-17
-100
-AcDbEntity
-  8
-FIXTURE
- 62
-5
-100
-AcDbCircle
- 10
-9200.0
- 20
-9000.0
- 30
-0.0
- 40
-80.0
-  0
-TEXT
-  5
-5F
-330
-17
-100
-AcDbEntity
-  8
-TEXT
- 62
-250
-100
-AcDbText
- 10
-9200.0
- 20
-8800.0
- 30
-0.0
- 40
-120.0
-  1
-主卧3排水
- 72
-1
- 11
-9200.0
- 21
-8800.0
- 31
-0.0
-100
-AcDbText
- 73
-2
-  0
-CIRCLE
-  5
-60
-330
-17
-100
-AcDbEntity
-  8
-FIXTURE
- 62
-5
-100
-AcDbCircle
- 10
 12000.0
  20
 7200.0
@@ -3567,7 +3403,7 @@ AcDbCircle
   0
 TEXT
   5
-61
+5B
 330
 17
 100
@@ -3588,6 +3424,8 @@ AcDbText
 120.0
   1
 公卫排水
+  7
+CJK
  72
 1
  11
@@ -3603,7 +3441,7 @@ AcDbText
   0
 TEXT
   5
-62
+5C
 330
 17
 100
@@ -3624,6 +3462,8 @@ AcDbText
 350.0
   1
 二层给排水平面图
+  7
+CJK
  72
 1
  11
@@ -4627,7 +4467,7 @@ CREATED_BY_EZDXF
   3
 WRITTEN_BY_EZDXF
 350
-65
+5F
   0
 DICTIONARYVAR
   5
@@ -4639,11 +4479,11 @@ DictionaryVariables
 280
 0
   1
-1.4.3 @ 2026-02-27T10:12:49.503113+00:00
+1.4.3 @ 2026-02-27T11:02:51.701224+00:00
   0
 DICTIONARYVAR
   5
-65
+5F
 330
 2D
 100
@@ -4651,7 +4491,7 @@ DictionaryVariables
 280
 0
   1
-1.4.3 @ 2026-02-27T10:12:49.504575+00:00
+1.4.3 @ 2026-02-27T11:02:51.702534+00:00
   0
 ENDSEC
   0

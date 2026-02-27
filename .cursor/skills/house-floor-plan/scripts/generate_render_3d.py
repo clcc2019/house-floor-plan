@@ -426,7 +426,7 @@ def generate_south_perspective():
     # 标题
     ft, fs = _get_fonts()
     draw.text((W//2, 50), "南立面透视效果图", fill=(50, 65, 80), font=ft, anchor="mt")
-    draw.text((W//2, 100), "现代简约别墅  |  14m × 11m  |  3主卧+2次卧  |  建筑面积 308㎡",
+    draw.text((W//2, 100), "现代简约别墅  |  14m × 11m  |  2主卧+1次卧  |  建筑面积 308㎡",
               fill=(120, 135, 150), font=fs, anchor="mt")
 
     img = img.filter(ImageFilter.SHARPEN)

@@ -25,7 +25,7 @@ from building_config import (
     BW, BH, OW, IW, BW_M, BD_M,
     GROUND, F1H, F2H, SLAB, PARAPET, WALL_T,
     GL, F1_FL, F1_CL, F2_FL, F2_CL, ROOF, TOP,
-    F1_X1, F1_Y0, F1_Y1, F1_NX1, F1_NX2, F1_MX1, F1_MY1,
+    F1_X1, F1_Y0, F1_Y1, F1_NX1, F1_NX2,
     F2_X1, F2_Y0, F2_Y1, F2_Y2, F2_NX1, F2_NX2, F2_NX3,
     SOUTH_WIN, SOUTH_DOOR, NORTH_WIN, EAST_WIN, WEST_WIN,
     SILL_STD, DARK_STONE_X,
@@ -326,7 +326,7 @@ class FloorPlan:
         self.ax.text(xo+0.08,(s(y1)+s(y2))/2,f"{abs(y2-y1)}",ha="left",va="center",fontsize=7.5,fontweight="bold",color=C_DIM,rotation=90,zorder=8)
     def info_block(self, floor_name):
         s = self._s; x = s(self.W)+2.0; y = s(self.H)-0.5
-        for i, item in enumerate(["项目简介：",f"楼层：{floor_name}","基地尺寸：14m × 11m","建筑面积：308 平米","建筑层数：二层","建筑风格：现代简约","卧室配置：3主卧+2次卧"]):
+        for i, item in enumerate(["项目简介：",f"楼层：{floor_name}","基地尺寸：14m × 11m","建筑面积：308 平米","建筑层数：二层","建筑风格：现代简约","卧室配置：2主卧+1次卧"]):
             self.ax.text(x,y-i*0.5,item,fontsize=8,color=C_TEXT,fontweight="bold" if i==0 else "normal",zorder=10)
     def north_arrow(self):
         s = self._s; x, y = -1.2, s(self.H)-1.5
@@ -350,30 +350,25 @@ class FloorPlan:
 def gen_floor1():
     X1 = F1_X1; Y0 = F1_Y0; Y1 = F1_Y1
     NX1 = F1_NX1; NX2 = F1_NX2
-    MX1 = F1_MX1; MY1 = F1_MY1
 
     fills = [
         (OW, OW, X1-OW, Y0-OW),                            # 客厅
         (X1+IW, OW, BW-OW-X1-IW, Y0-OW),                  # 玄关
         (OW, Y0+IW, X1-OW, Y1-Y0-IW),                     # 客餐厅 LDK
-        (X1+IW, Y0+IW, MX1-X1-IW, Y1-Y0-IW),              # 主卧1（含衣柜区）
-        (MX1+IW, Y0+IW, BW-OW-MX1-IW, MY1-Y0-IW),         # 主卫1（东北角）
-        (MX1+IW, MY1+IW, BW-OW-MX1-IW, Y1-MY1-IW),        # 主卧1衣帽间
+        (X1+IW, Y0+IW, BW-OW-X1-IW, Y1-Y0-IW),            # 主卧1（无独立卫浴）
         (OW, Y1+IW, NX1-OW, BH-OW-Y1-IW),                 # 厨房
-        (NX1+IW, Y1+IW, NX2-NX1-IW, BH-OW-Y1-IW),        # 客卫
+        (NX1+IW, Y1+IW, NX2-NX1-IW, BH-OW-Y1-IW),        # 公共卫浴
         (NX2+IW, Y1+IW, BW-OW-NX2-IW, BH-OW-Y1-IW),      # 楼梯间
     ]
     hwalls = [
         (OW, Y0, X1-OW),                                   # 客厅|LDK 顶墙
         (X1+IW, Y0, BW-OW-X1-IW),                          # 玄关|主卧 顶墙
         (OW, Y1, BW-2*OW),                                 # LDK|厨房 北侧带底墙
-        (MX1+IW, MY1, BW-OW-MX1-IW),                       # 主卫1|衣帽间
     ]
     vwalls = [
         (X1, OW, Y1-OW),                                   # 公共区 | 私密区
-        (MX1, Y0+IW, Y1-Y0-IW),                            # 主卧1 | 主卫1+衣帽间
-        (NX1, Y1+IW, BH-OW-Y1-IW),                         # 厨房 | 客卫
-        (NX2, Y1+IW, BH-OW-Y1-IW),                         # 客卫 | 楼梯间
+        (NX1, Y1+IW, BH-OW-Y1-IW),                         # 厨房 | 公共卫浴
+        (NX2, Y1+IW, BH-OW-Y1-IW),                         # 公共卫浴 | 楼梯间
     ]
 
     # DXF
@@ -385,18 +380,16 @@ def gen_floor1():
     dxf_text(msp, (OW+X1)/2, (OW+Y0)/2, "客厅", 300)
     dxf_text(msp, (X1+BW)/2, (OW+Y0)/2, "玄关", 200)
     dxf_text(msp, (OW+X1)/2, (Y0+Y1)/2, "客餐厅 LDK", 300)
-    dxf_text(msp, (X1+MX1)/2, (Y0+Y1)/2, "主卧室1", 250)
-    dxf_text(msp, (MX1+BW)/2, (Y0+MY1)/2, "主卫1", 200)
-    dxf_text(msp, (MX1+BW)/2, (MY1+Y1)/2, "衣帽间", 200)
+    dxf_text(msp, (X1+BW)/2, (Y0+Y1)/2, "主卧室1", 250)
     dxf_text(msp, (OW+NX1)/2, (Y1+BH)/2, "厨房", 250)
-    dxf_text(msp, (NX1+NX2)/2, (Y1+BH)/2, "客卫", 200)
+    dxf_text(msp, (NX1+NX2)/2, (Y1+BH)/2, "卫浴", 200)
     dxf_text(msp, (NX2+BW)/2, (Y1+BH)/2, "楼梯间", 200)
     dxf_dim_h(msp, 0, X1, 0); dxf_dim_h(msp, X1, BW, 0)
     dxf_dim_v(msp, 0, Y0, BW); dxf_dim_v(msp, Y0, Y1, BW); dxf_dim_v(msp, Y1, BH, BW)
     doc.saveas(f"{DIRS['平面图']}/一层平面图.dxf")
 
     # PNG
-    fp = FloorPlan("一层平面图  Ground Floor Plan", "3主卧+2次卧 现代简约别墅")
+    fp = FloorPlan("一层平面图  Ground Floor Plan", "2主卧+1次卧 现代简约别墅")
     for rf in fills: fp.fill_room(*rf)
     fp.draw_outer_walls()
     for w in hwalls: fp.draw_iwall_h(*w)
@@ -404,12 +397,10 @@ def gen_floor1():
 
     fp.room_label((OW+X1)/2, (OW+Y0)/2, "客厅", "Living Room", "8.0m×2.0m")
     fp.room_label((X1+BW)/2, (OW+Y0)/2, "玄关", "Entrance", "5.6m×2.0m")
-    fp.room_label((OW+X1)/2, (Y0+Y1)/2, "客餐厅 LDK", "Living+Dining", "8.0m×5.0m")
-    fp.room_label((X1+MX1)/2, (Y0+Y1)/2, "主卧室1（老人房）", "Master BR.1", "3.8m×5.0m")
-    fp.room_label((MX1+BW)/2, (Y0+MY1)/2, "主卫1", "En-suite 1", "1.8m×2.0m")
-    fp.room_label((MX1+BW)/2, (MY1+Y1)/2, "衣帽间", "Walk-in Closet", "1.8m×3.0m")
+    fp.room_label((OW+X1)/2, (Y0+Y1)/2, "客餐厅 LDK", "Living+Dining", "8.0m×5.2m")
+    fp.room_label((X1+BW)/2, (Y0+Y1)/2, "主卧室1（老人房）", "Master BR.1", "5.6m×5.2m")
     fp.room_label((OW+NX1)/2, (Y1+BH)/2, "厨房", "Kitchen", "4.6m×3.6m")
-    fp.room_label((NX1+NX2)/2, (Y1+BH)/2, "客卫", "Guest WC", "1.8m×3.6m")
+    fp.room_label((NX1+NX2)/2, (Y1+BH)/2, "公共卫浴", "Bathroom", "1.8m×3.6m")
     fp.room_label((NX2+BW)/2, (Y1+BH)/2, "楼梯间", "Stairs", "7.2m×3.6m")
 
     # 家具
@@ -417,29 +408,24 @@ def gen_floor1():
     fp.tv_wall(1000, Y0+IW+200, 2500)
     fp.dining_round(5500, 4800)
     fp.kitchen_L(OW+100, Y1+IW+100, 4300, BH-OW-Y1-IW-200, 550)
-    fp.bed_double(X1+IW+500, Y0+IW+1200, 1800, 2000)       # 主卧1双人床（3.8m宽够放）
-    fp.wardrobe(MX1+IW+100, MY1+IW+200, BW-OW-MX1-IW-200, 500)  # 衣帽间衣柜
-    fp.toilet(MX1+IW+400, Y0+IW+500)                        # 主卫1马桶
-    fp.sink(MX1+IW+300, MY1-500)                             # 主卫1洗手台
-    fp.shower_room(MX1+IW+800, Y0+IW+200, 800)              # 主卫1淋浴
-    fp.toilet(NX1+IW+400, Y1+IW+500)                        # 客卫马桶
-    fp.sink(NX1+IW+300, BH-OW-600)                          # 客卫洗手台
+    fp.bed_double(X1+IW+800, Y0+IW+1200, 1800, 2000)
+    fp.wardrobe(X1+IW+200, Y1-700, BW-OW-X1-IW-400, 500)
+    fp.toilet(NX1+IW+400, Y1+IW+500)
+    fp.sink(NX1+IW+300, BH-OW-600)
     fp.stairs(NX2+IW+400, Y1+IW+300, 2800, 3000, 14, "up")
 
-    # 门 — 确保每个房间都有合理的进出门
-    fp.door_h(X1+IW+1200, OW, 1200, True)                  # 1. 大门（南面玄关石材门）
-    fp.door_h(3500, Y0, 900, False)                         # 2. 客厅→LDK（开放连通）
-    fp.door_v(X1+IW, Y0+IW+500, 900, True)                 # 3. 玄关→主卧1（从玄关进入主卧）
-    fp.door_v(MX1, Y0+IW+800, 800, False)                  # 4. 主卧1→主卫1（主卫从卧室内进入）
-    fp.door_v(MX1, MY1+IW+500, 800, True)                  # 5. 主卧1→衣帽间
-    fp.door_h(2500, Y1+IW, 900, True)                       # 6. LDK→厨房
-    fp.door_h(NX1+IW+200, Y1, 700, False)                   # 7. 客卫→LDK
-    fp.door_h(NX2+IW+500, Y1, 900, False)                   # 8. 楼梯间→LDK
+    # 门
+    fp.door_h(X1+IW+1200, OW, 1200, True)                  # 大门（南面玄关石材门）
+    fp.door_h(3500, Y0, 900, False)                         # 客厅→LDK
+    fp.door_v(X1+IW, Y0+IW+500, 900, True)                 # 玄关→主卧1
+    fp.door_h(2500, Y1+IW, 900, True)                       # LDK→厨房
+    fp.door_h(NX1+IW+200, Y1, 700, False)                   # 卫浴→LDK
+    fp.door_h(NX2+IW+500, Y1, 900, False)                   # 楼梯间→LDK
 
     # 窗户
     fp.window_h(1000, 0, 5000)                              # 南面客厅超大落地窗
     fp.window_h(800, BH, 2500)                              # 北面厨房窗
-    fp.window_h(NX1+IW+200, BH, 1000)                      # 北面客卫窗（通风）
+    fp.window_h(NX1+IW+200, BH, 1000)                      # 北面卫浴窗
     fp.window_h(NX2+IW+1500, BH, 3500)                     # 北面楼梯间窗
     fp.window_v(0, 3000, 3500)                              # 西面LDK大窗
     fp.window_v(0, Y1+IW+500, 2500)                         # 西面厨房窗
@@ -463,16 +449,16 @@ def gen_floor2():
 
     fills = [
         (OW,OW,BW-2*OW,Y0-OW),                             # 阳台
-        (OW,Y0+IW,X1-OW,Y1-Y0-IW),                         # 次卧1
-        (X1+IW,Y0+IW,BW-OW-X1-IW,Y1-Y0-IW),               # 次卧2
+        (OW,Y0+IW,X1-OW,Y1-Y0-IW),                         # 次卧
+        (X1+IW,Y0+IW,BW-OW-X1-IW,Y1-Y0-IW),               # 多功能区（留空）
         (OW,Y1+IW,BW-2*OW,Y2-Y1-IW),                       # 走廊/起居厅
         (OW,Y2+IW,NX1-OW,BH-OW-Y2-IW),                     # 主卧2
         (NX1+IW,Y2+IW,NX2-NX1-IW,BH-OW-Y2-IW),            # 主卫2
-        (NX2+IW,Y2+IW,NX3-NX2-IW,BH-OW-Y2-IW),            # 主卧3
+        (NX2+IW,Y2+IW,NX3-NX2-IW,BH-OW-Y2-IW),            # 留空区
         (NX3+IW,Y2+IW,BW-OW-NX3-IW,(BH-OW-Y2-IW)//2),     # 公卫
         (NX3+IW,Y2+IW+(BH-OW-Y2-IW)//2+IW,BW-OW-NX3-IW,(BH-OW-Y2-IW)//2-IW),  # 楼梯间
     ]
-    YM = Y2+IW+(BH-OW-Y2-IW)//2  # 公卫|楼梯分界Y
+    YM = Y2+IW+(BH-OW-Y2-IW)//2
     hwalls = [
         (OW,Y0,BW-2*OW),                                    # 阳台顶墙
         (OW,Y1,BW-2*OW),                                    # 走廊底墙
@@ -480,10 +466,10 @@ def gen_floor2():
         (NX3+IW,YM,BW-OW-NX3-IW),                           # 公卫|楼梯
     ]
     vwalls = [
-        (X1,Y0+IW,Y1-Y0-IW),                                # 次卧1|次卧2
+        (X1,Y0+IW,Y1-Y0-IW),                                # 次卧|多功能区
         (NX1,Y2+IW,BH-OW-Y2-IW),                            # 主卧2|主卫2
-        (NX2,Y2+IW,BH-OW-Y2-IW),                            # 主卫2|主卧3
-        (NX3,Y2+IW,BH-OW-Y2-IW),                            # 主卧3|公卫+楼梯
+        (NX2,Y2+IW,BH-OW-Y2-IW),                            # 主卫2|留空区
+        (NX3,Y2+IW,BH-OW-Y2-IW),                            # 留空区|公卫+楼梯
     ]
 
     # DXF
@@ -493,62 +479,60 @@ def gen_floor2():
     for w in hwalls: wall_h(msp, *w, t=IW)
     for w in vwalls: wall_v(msp, *w, t=IW)
     dxf_text(msp, BW/2, Y0/2, "南向大阳台", 250)
-    dxf_text(msp, (OW+X1)/2, (Y0+Y1)/2, "次卧室1", 250)
-    dxf_text(msp, (X1+BW)/2, (Y0+Y1)/2, "次卧室2", 250)
+    dxf_text(msp, (OW+X1)/2, (Y0+Y1)/2, "次卧室", 250)
+    dxf_text(msp, (X1+BW)/2, (Y0+Y1)/2, "多功能区", 250)
     dxf_text(msp, BW/2, (Y1+Y2)/2, "走廊", 250)
     dxf_text(msp, (OW+NX1)/2, (Y2+BH)/2, "主卧室2", 300)
     dxf_text(msp, (NX1+NX2)/2, (Y2+BH)/2, "主卫2", 200)
-    dxf_text(msp, (NX2+NX3)/2, (Y2+BH)/2, "主卧室3", 250)
+    dxf_text(msp, (NX2+NX3)/2, (Y2+BH)/2, "留空区", 250)
     dxf_text(msp, (NX3+BW)/2, (Y2+YM)/2, "公卫", 200)
     dxf_text(msp, (NX3+BW)/2, (YM+BH)/2, "楼梯间", 200)
     doc.saveas(f"{DIRS['平面图']}/二层平面图.dxf")
 
     # PNG
-    fp = FloorPlan("二层平面图  Second Floor Plan", "3主卧+2次卧 现代简约别墅")
+    fp = FloorPlan("二层平面图  Second Floor Plan", "2主卧+1次卧 现代简约别墅")
     for rf in fills: fp.fill_room(*rf)
     fp.draw_outer_walls()
     for w in hwalls: fp.draw_iwall_h(*w)
     for w in vwalls: fp.draw_iwall_v(*w)
     fp.room_label(BW/2,Y0/2,"南向大阳台","Balcony","14.0m×1.5m")
-    fp.room_label((OW+X1)/2,(Y0+Y1)/2,"次卧室1","Bedroom 4","4.6m×3.7m")
-    fp.room_label((X1+BW)/2,(Y0+Y1)/2,"次卧室2","Bedroom 5","9.0m×3.7m")
+    fp.room_label((OW+X1)/2,(Y0+Y1)/2,"次卧室","Bedroom","4.6m×3.7m")
+    fp.room_label((X1+BW)/2,(Y0+Y1)/2,"多功能区（留空）","Flex Space","9.0m×3.7m")
     fp.room_label(BW/2,(Y1+Y2)/2,"走廊/起居厅","Hallway","13.5m×2.0m")
     fp.room_label((OW+NX1)/2,(Y2+BH)/2,"主卧室2（夫妻房）","Master BR.2","5.6m×3.6m")
     fp.room_label((NX1+NX2)/2,(Y2+BH)/2,"主卫2","En-suite 2","2.2m×3.6m")
-    fp.room_label((NX2+NX3)/2,(Y2+BH)/2,"主卧室3","Master BR.3","3.2m×3.6m")
+    fp.room_label((NX2+NX3)/2,(Y2+BH)/2,"留空区","Reserved","3.2m×3.6m")
     fp.room_label((NX3+BW)/2,(Y2+YM)/2,"公卫","WC","2.6m×1.8m")
     fp.room_label((NX3+BW)/2,(YM+BH)/2,"楼梯间","Stairs","2.6m×1.7m")
 
     # 家具
     fp.bed_double(1500,7800,1800,2000); fp.wardrobe(400,10100,5000,500)
     fp.toilet(NX1+IW+500,8000); fp.sink(NX1+IW+400,9600); fp.shower_room(NX1+IW+200,7500,900)
-    fp.bed_double(NX2+IW+400,7800,1800,2000); fp.wardrobe(NX2+IW+200,10100,NX3-NX2-IW-400,500)
     fp.bed_single(1200,Y0+IW+300,1200,2000)
-    fp.bed_double(X1+IW+1500,Y0+IW+300,1800,2000)
-    fp.desk_chair(X1+IW+5500,Y0+IW+800,1400,550)
+    fp.desk_chair(1200,Y0+IW+2800,1400,550)
     fp.toilet(NX3+IW+400,Y2+IW+400); fp.sink(NX3+IW+300,YM-500)
     fp.stairs(NX3+IW+200,YM+IW+200,2200,BH-OW-YM-IW-400,13,"down")
 
-    # 门 — 每个房间都有门
-    fp.door_h(2000,Y1,800,False)                            # 1. 次卧1→走廊
-    fp.door_h(X1+IW+2000,Y1,800,False)                     # 2. 次卧2→走廊
-    fp.door_h(2500,Y2+IW,900,True)                          # 3. 走廊→主卧2
-    fp.door_v(NX1+IW,8800,800,True)                         # 4. 主卫2→主卧2（从卧室内进入）
-    fp.door_h(NX2+IW+500,Y2+IW,900,True)                   # 5. 走廊→主卧3
-    fp.door_v(NX3+IW,Y2+IW+500,700,False)                  # 6. 公卫→走廊
-    fp.door_h(NX3+IW+500,YM,700,True)                      # 7. 楼梯间门
+    # 门
+    fp.door_h(2000,Y1,800,False)                            # 次卧→走廊
+    fp.door_h(X1+IW+2000,Y1,800,False)                     # 多功能区→走廊
+    fp.door_h(2500,Y2+IW,900,True)                          # 走廊→主卧2
+    fp.door_v(NX1+IW,8800,800,True)                         # 主卫2→主卧2
+    fp.door_h(NX2+IW+500,Y2+IW,900,True)                   # 走廊→留空区
+    fp.door_v(NX3+IW,Y2+IW+500,700,False)                  # 公卫→走廊
+    fp.door_h(NX3+IW+500,YM,700,True)                      # 楼梯间门
 
     # 窗户
-    fp.window_h(1000,BH,2500)                               # 主卧2北窗
+    fp.window_h(1000,BH,3000)                               # 主卧2北窗（加宽）
     fp.window_h(NX1+300,BH,1500)                            # 主卫2北窗
-    fp.window_h(NX2+500,BH,2000)                            # 主卧3北窗
+    fp.window_h(NX2+500,BH,2000)                            # 留空区北窗
     fp.window_v(0,8000,2000)                                # 主卧2西窗
-    fp.window_v(0,Y0+500,2000)                              # 次卧1西窗
-    fp.window_h(1200,Y0,2000)                               # 次卧1阳台窗
-    fp.window_h(X1+500,Y0,3000)                             # 次卧2阳台窗
-    fp.window_h(X1+4500,Y0,2000)                            # 次卧2阳台窗2
-    fp.window_v(BW,8500,2000)                               # 主卧3东窗（或楼梯窗）
-    fp.window_v(BW,Y0+500,2000)                             # 次卧2东窗
+    fp.window_v(0,Y0+500,2000)                              # 次卧西窗
+    fp.window_h(1200,Y0,2000)                               # 次卧阳台窗
+    fp.window_h(5500,Y0,4000)                               # 多功能区阳台窗
+    fp.window_h(10500,Y0,2000)                              # 多功能区阳台窗2
+    fp.window_v(BW,8500,2000)                               # 留空区/楼梯东窗
+    fp.window_v(BW,Y0+500,2500)                             # 多功能区东窗
 
     # 尺寸
     fp.dim_h(0,X1,0); fp.dim_h(X1,BW,0); fp.dim_total_h(0,BW,0)
@@ -917,13 +901,13 @@ def _plumbing_png(title, floor_name, walls, pipes_s, pipes_d, pipes_h, fixtures,
     C_ROOM_LABEL = "#AAAAAA"
     if floor_name == "一层":
         rooms = [((OW+F1_X1)/2,(OW+F1_Y0)/2,"客厅"),((F1_X1+BW)/2,(OW+F1_Y0)/2,"玄关"),((OW+F1_X1)/2,(F1_Y0+F1_Y1)/2,"客餐厅 LDK"),
-                 ((F1_X1+F1_MX1)/2,(F1_Y0+F1_Y1)/2,"主卧室1"),((F1_MX1+BW)/2,(F1_Y0+F1_MY1)/2,"主卫1"),((F1_MX1+BW)/2,(F1_MY1+F1_Y1)/2,"衣帽间"),
-                 ((OW+F1_NX1)/2,(F1_Y1+BH)/2,"厨房"),((F1_NX1+F1_NX2)/2,(F1_Y1+BH)/2,"客卫"),((F1_NX2+BW)/2,(F1_Y1+BH)/2,"楼梯间")]
+                 ((F1_X1+BW)/2,(F1_Y0+F1_Y1)/2,"主卧室1"),
+                 ((OW+F1_NX1)/2,(F1_Y1+BH)/2,"厨房"),((F1_NX1+F1_NX2)/2,(F1_Y1+BH)/2,"卫浴"),((F1_NX2+BW)/2,(F1_Y1+BH)/2,"楼梯间")]
     else:
         YM = F2_Y2+IW+(BH-OW-F2_Y2-IW)//2
-        rooms = [(BW/2,F2_Y0/2,"南向大阳台"),((OW+F2_X1)/2,(F2_Y0+F2_Y1)/2,"次卧室1"),((F2_X1+BW)/2,(F2_Y0+F2_Y1)/2,"次卧室2"),
+        rooms = [(BW/2,F2_Y0/2,"南向大阳台"),((OW+F2_X1)/2,(F2_Y0+F2_Y1)/2,"次卧"),((F2_X1+BW)/2,(F2_Y0+F2_Y1)/2,"多功能区"),
                  (BW/2,(F2_Y1+F2_Y2)/2,"走廊"),((OW+F2_NX1)/2,(F2_Y2+BH)/2,"主卧室2"),((F2_NX1+F2_NX2)/2,(F2_Y2+BH)/2,"主卫2"),
-                 ((F2_NX2+F2_NX3)/2,(F2_Y2+BH)/2,"主卧室3"),((F2_NX3+BW)/2,(F2_Y2+YM)/2,"公卫"),((F2_NX3+BW)/2,(YM+BH)/2,"楼梯间")]
+                 ((F2_NX2+F2_NX3)/2,(F2_Y2+BH)/2,"留空区"),((F2_NX3+BW)/2,(F2_Y2+YM)/2,"公卫"),((F2_NX3+BW)/2,(YM+BH)/2,"楼梯间")]
     for cx,cy,name in rooms:
         ax.text(s(cx),s(cy),name,ha="center",va="center",fontsize=14,color=C_ROOM_LABEL,zorder=4)
 
@@ -974,40 +958,34 @@ def _plumbing_png(title, floor_name, walls, pipes_s, pipes_d, pipes_h, fixtures,
 
 
 def gen_plumbing():
-    # 新布局: X1=8200, Y0=2200, Y1=7200, NX1=4800, NX2=6600, MX1=12000, MY1=4200
-    f1_walls = [(240,2200,7960,120),(8320,2200,BW-240-8320,120),(240,7200,BW-480,120),
-                (8200,240,120,6960),(12000,2320,120,4880),(12120,4200,BW-240-12120,120),
-                (4800,7320,120,BH-240-7320),(6600,7320,120,BH-240-7320)]
+    # 一层布局: X1=8200, Y0=2200, Y1=7400, NX1=4800, NX2=6600（无独立主卫）
+    f1_walls = [(240,2200,7960,120),(8320,2200,BW-240-8320,120),(240,7400,BW-480,120),
+                (8200,240,120,7160),
+                (4800,7520,120,BH-240-7520),(6600,7520,120,BH-240-7520)]
     f1_ps = [[(2500,10500),(2500,8000),(4200,8000)],
-             [(12500,4500),(12500,3500)],
              [(5200,8000),(5200,9500)]]
     f1_pd = [[(2000,9000),(2000,10500),(500,10500)],
-             [(5500,9500),(5500,10500),(3000,10500)],
-             [(12300,3200),(12300,200),(500,200)]]
-    f1_ph = [[(2500,10500),(2500,8200),(4200,8200)],
-             [(12500,4500),(12500,3800)]]
-    f1_fix = [(2500,8000,"厨房给水",C_WATER_SUPPLY),(12500,3500,"主卫1给水",C_WATER_SUPPLY),(5200,9500,"客卫给水",C_WATER_SUPPLY),
-              (2000,9000,"厨房排水",C_WATER_DRAIN),(12300,3200,"主卫1排水",C_WATER_DRAIN),(5500,9500,"客卫排水",C_WATER_DRAIN)]
+             [(5500,9500),(5500,10500),(3000,10500)]]
+    f1_ph = [[(2500,10500),(2500,8200),(4200,8200)]]
+    f1_fix = [(2500,8000,"厨房给水",C_WATER_SUPPLY),(5200,9500,"卫浴给水",C_WATER_SUPPLY),
+              (2000,9000,"厨房排水",C_WATER_DRAIN),(5500,9500,"卫浴排水",C_WATER_DRAIN)]
 
     _plumbing_dxf("一层", f1_ps, f1_pd, f1_ph,
         [(x,y,t) for (x,y,t,c) in f1_fix], "一层给排水平面图")
     _plumbing_png("一层给排水平面图  1F Plumbing Plan", "一层", f1_walls, f1_ps, f1_pd, f1_ph, f1_fix, "一层给排水平面图")
 
-    # 二层墙体: X1=4500,X2=9800,X3=11800,Y0=1500,Y1=4800,Y2=7200
+    # 二层布局: X1=4800, Y0=1500, Y1=5200, Y2=7200, NX1=5800, NX2=8000, NX3=11200
     f2_walls = [(240,1500,BW-480,120),(240,5200,BW-480,120),
                 (240,7200,BW-480,120),(4800,1620,120,3580),
                 (5800,7320,120,3440),(8000,7320,120,3440),
                 (11200,7320,120,3440)]
     f2_ps = [[(6500,8500),(6200,8500),(6200,9500)],
-             [(9000,8500),(9000,9500)],
              [(11800,7500),(11800,7000)]]
     f2_pd = [[(5900,9000),(5900,10500),(500,10500)],
-             [(9200,9000),(13500,9000),(13500,200)],
              [(12000,7200),(12000,200),(10000,200)]]
-    f2_ph = [[(6500,8500),(6200,8500),(6200,9500)],
-             [(9000,8500),(9200,8500),(9200,9500)]]
-    f2_fix = [(6200,9500,"主卫2给水",C_WATER_SUPPLY),(9000,9500,"主卧3给水",C_WATER_SUPPLY),(11800,7000,"公卫给水",C_WATER_SUPPLY),
-              (5900,9000,"主卫2排水",C_WATER_DRAIN),(9200,9000,"主卧3排水",C_WATER_DRAIN),(12000,7200,"公卫排水",C_WATER_DRAIN)]
+    f2_ph = [[(6500,8500),(6200,8500),(6200,9500)]]
+    f2_fix = [(6200,9500,"主卫2给水",C_WATER_SUPPLY),(11800,7000,"公卫给水",C_WATER_SUPPLY),
+              (5900,9000,"主卫2排水",C_WATER_DRAIN),(12000,7200,"公卫排水",C_WATER_DRAIN)]
 
     _plumbing_dxf("二层", f2_ps, f2_pd, f2_ph,
         [(x,y,t) for (x,y,t,c) in f2_fix], "二层给排水平面图")
@@ -1040,12 +1018,12 @@ def _elec_dxf(floor_name, lights, sockets, switches, filename):
 
 
 def gen_electrical():
-    # 一层电气: X1=8200, Y0=2200, Y1=7200, NX1=4800, NX2=6600, MX1=12000
+    # 一层电气: X1=8200, Y0=2200, Y1=7400, NX1=4800, NX2=6600（无独立主卫）
     f1_lights = [
         (11000,1200,"玄关筒灯"),(4000,1200,"客厅筒灯"),
         (4000,4700,"LDK主灯"),(5500,4200,"餐厅灯"),
-        (2500,9000,"厨房主灯"),(5700,9000,"客卫灯"),
-        (10000,4700,"主卧1主灯"),(13000,3200,"主卫1灯"),
+        (2500,9000,"厨房主灯"),(5700,9000,"卫浴灯"),
+        (10500,4700,"主卧1主灯"),
         (10500,9000,"楼梯灯"),
     ]
     f1_sockets = [
@@ -1053,41 +1031,38 @@ def gen_electrical():
         (800,10200,"净水器"),(5400,10200,"吹风机"),
         (500,3500,"电视"),(500,4200,"路由器"),
         (500,5500,"沙发USB"),(3500,5500,"沙发USB"),(7500,6500,"空调16A"),
-        (8500,3500,"床头L"),(8500,4200,"USB充电L"),(11500,3500,"床头R"),(11500,4200,"USB充电R"),
-        (8500,6800,"空调16A"),(13200,3800,"吹风机"),
+        (8800,3500,"床头L"),(8800,4200,"USB充电L"),(12000,3500,"床头R"),(12000,4200,"USB充电R"),
+        (8800,6800,"空调16A"),
     ]
     f1_switches = [
-        (2800,7200,"厨房灯"),(5000,7200,"客卫灯"),(10500,500,"玄关"),
+        (2800,7400,"厨房灯"),(5000,7400,"卫浴灯"),(10500,500,"玄关"),
         (7500,2400,"客厅(门口)"),(4000,4500,"LDK(沙发)"),(5500,4500,"餐厅"),
-        (8500,2800,"主卧(门口)"),(11500,2800,"主卧(床头)"),(12500,4500,"主卫"),
-        (7500,7200,"楼梯↑"),
+        (8800,2800,"主卧(门口)"),(12000,2800,"主卧(床头)"),
+        (7500,7400,"楼梯↑"),
     ]
     _elec_dxf("一层", f1_lights, f1_sockets, f1_switches, "一层电气平面图")
 
-    # 二层电气: X1=4800,Y0=1500,Y1=5200,Y2=7200,NX1=5800,NX2=8000,NX3=11200
+    # 二层电气: X1=4800, Y0=1500, Y1=5200, Y2=7200, NX1=5800, NX2=8000, NX3=11200
     f2_lights = [
-        (3000,8800,"主卧2主灯"),(6900,8500,"主卫2灯"),(9600,8800,"主卧3主灯"),
-        (12200,7800,"公卫灯"),(2000,3500,"次卧1灯"),(7500,3500,"次卧2灯"),
-        (11000,3000,"次卧2书桌灯"),
+        (3000,8800,"主卧2主灯"),(6900,8500,"主卫2灯"),
+        (12200,7800,"公卫灯"),(2000,3500,"次卧灯"),
+        (7500,3500,"多功能区灯"),
         (2000,6200,"走廊灯1"),(5000,6200,"走廊灯2"),(8000,6200,"走廊灯3"),
         (12200,9500,"楼梯灯"),(3000,800,"阳台灯1"),(7000,800,"阳台灯2"),(12000,800,"阳台灯3"),
     ]
     f2_sockets = [
         (600,8000,"床头USB L"),(600,8600,"床头L"),(4500,8000,"床头USB R"),(4500,8600,"床头R"),
         (600,10500,"空调16A"),
-        (8200,8000,"床头USB L"),(10500,8000,"床头USB R"),
-        (8200,8600,"床头L"),(10500,8600,"床头R"),(10500,10500,"空调16A"),
         (600,2000,"床头"),(600,2600,"USB"),(3500,2500,"书桌"),(600,4600,"空调16A"),
-        (5200,2000,"床头"),(5200,2600,"USB"),(8500,2500,"书桌"),(5200,4600,"空调16A"),
-        (10500,2000,"电脑"),(12000,2000,"显示器"),(13000,2000,"USB"),
+        (5200,2000,"预留"),(5200,2600,"预留"),(5200,4600,"空调16A"),
         (12000,7500,"吹风机"),(6500,10000,"吹风机"),
         (5000,500,"阳台"),(9000,500,"洗衣机"),
     ]
     f2_switches = [
-        (2800,7200,"主卧2(门口)"),(600,7600,"主卧2(床头)"),(8500,7200,"主卧3(门口)"),
-        (10500,7600,"主卧3(床头)"),(6200,7200,"主卫2"),(11500,7200,"公卫"),
-        (2000,5000,"次卧1(门口)"),(600,1800,"次卧1(床头)"),
-        (5500,5000,"次卧2(门口)"),(5200,1800,"次卧2(床头)"),
+        (2800,7200,"主卧2(门口)"),(600,7600,"主卧2(床头)"),
+        (6200,7200,"主卫2"),(11500,7200,"公卫"),
+        (2000,5000,"次卧(门口)"),(600,1800,"次卧(床头)"),
+        (5500,5000,"多功能区"),
         (2000,5500,"走廊(次卧侧)"),(8000,7000,"走廊(主卧侧)"),
         (11800,7200,"楼梯↓"),(3000,1700,"阳台"),
     ]
@@ -1097,16 +1072,15 @@ def gen_electrical():
     C_WIRE = "#AAAAAA"  # 回路控制线（浅灰虚线）
     F1_ROOM_LABELS = [
         ((OW+F1_X1)/2, (OW+F1_Y0)/2, "客厅"), ((F1_X1+BW)/2, (OW+F1_Y0)/2, "玄关"),
-        ((OW+F1_X1)/2, (F1_Y0+F1_Y1)/2, "LDK"), ((F1_X1+F1_MX1)/2, (F1_Y0+F1_Y1)/2, "主卧"),
-        ((F1_MX1+BW)/2, (F1_Y0+F1_MY1)/2, "主卫"), ((F1_MX1+BW)/2, (F1_MY1+F1_Y1)/2, "衣帽间"),
-        ((OW+F1_NX1)/2, (F1_Y1+BH)/2, "厨房"), ((F1_NX1+F1_NX2)/2, (F1_Y1+BH)/2, "客卫"),
+        ((OW+F1_X1)/2, (F1_Y0+F1_Y1)/2, "LDK"), ((F1_X1+BW)/2, (F1_Y0+F1_Y1)/2, "主卧"),
+        ((OW+F1_NX1)/2, (F1_Y1+BH)/2, "厨房"), ((F1_NX1+F1_NX2)/2, (F1_Y1+BH)/2, "卫浴"),
         ((F1_NX2+BW)/2, (F1_Y1+BH)/2, "楼梯间"),
     ]
-    F2_YM = F2_Y2 + IW + (BH - OW - F2_Y2 - IW) // 2  # 公卫|楼梯分界Y
+    F2_YM = F2_Y2 + IW + (BH - OW - F2_Y2 - IW) // 2
     F2_ROOM_LABELS = [
-        (BW/2, F2_Y0/2, "阳台"), ((OW+F2_X1)/2, (F2_Y0+F2_Y1)/2, "次卧1"), ((F2_X1+BW)/2, (F2_Y0+F2_Y1)/2, "次卧2"),
+        (BW/2, F2_Y0/2, "阳台"), ((OW+F2_X1)/2, (F2_Y0+F2_Y1)/2, "次卧"), ((F2_X1+BW)/2, (F2_Y0+F2_Y1)/2, "多功能区"),
         (BW/2, (F2_Y1+F2_Y2)/2, "走廊"), ((OW+F2_NX1)/2, (F2_Y2+BH)/2, "主卧2"), ((F2_NX1+F2_NX2)/2, (F2_Y2+BH)/2, "主卫2"),
-        ((F2_NX2+F2_NX3)/2, (F2_Y2+BH)/2, "主卧3"), ((F2_NX3+BW)/2, (F2_Y2+F2_YM)/2, "公卫"),
+        ((F2_NX2+F2_NX3)/2, (F2_Y2+BH)/2, "留空区"), ((F2_NX3+BW)/2, (F2_Y2+F2_YM)/2, "公卫"),
         ((F2_NX3+BW)/2, (F2_YM+BH)/2, "楼梯间"),
     ]
     def light_is_downlight(txt): return "筒灯" in txt or "射灯" in txt
@@ -1114,19 +1088,19 @@ def gen_electrical():
 
     for floor_n, lights, sockets, switches, walls, fname, room_labels, db_x, db_y, circuit_pairs in [
         ("一层", f1_lights, f1_sockets, f1_switches,
-         [(240,2200,7960,120),(8320,2200,BW-240-8320,120),(240,7200,BW-480,120),
-          (8200,240,120,6960),(12000,2320,120,4880),(12120,4200,BW-240-12120,120),
-          (4800,7320,120,BH-240-7320),(6600,7320,120,BH-240-7320)],
+         [(240,2200,7960,120),(8320,2200,BW-240-8320,120),(240,7400,BW-480,120),
+          (8200,240,120,7160),
+          (4800,7520,120,BH-240-7520),(6600,7520,120,BH-240-7520)],
          "一层电气平面图", F1_ROOM_LABELS, F1_X1+IW+200, F1_Y0+IW+200,
-         [(2800,7200,2500,9000),(5000,7200,5700,9000),(7500,2400,4000,1200),
-          (4000,4500,4000,4700),(8500,2800,10000,4700),(12500,4500,13000,3200)]),
+         [(2800,7400,2500,9000),(5000,7400,5700,9000),(7500,2400,4000,1200),
+          (4000,4500,4000,4700),(8800,2800,10500,4700)]),
         ("二层", f2_lights, f2_sockets, f2_switches,
          [(240,1500,BW-480,120),(240,5200,BW-480,120),
           (240,7200,BW-480,120),(4800,1620,120,3580),
           (5800,7320,120,3440),(8000,7320,120,3440),(11200,7320,120,3440)],
          "二层电气平面图", F2_ROOM_LABELS, BW/2, F2_Y2+IW+200,
-         [(2800,7200,3000,8800),(8500,7200,9600,8800),(6200,7200,6900,8500),(11500,7200,12200,7800),
-          (2000,5000,2000,3500),(5500,5000,7500,3500),(2000,5505,3500,6200),(8000,7000,8000,6200),
+         [(2800,7200,3000,8800),(6200,7200,6900,8500),(11500,7200,12200,7800),
+          (2000,5000,2000,3500),(5500,5000,7500,3500),(2000,5500,3500,6200),(8000,7000,8000,6200),
           (11800,7200,12200,9500),(3000,1700,5000,800)]),
     ]:
         fig, ax = plt.subplots(1,1,figsize=(18,14),dpi=150,facecolor=C_BG)
@@ -1525,22 +1499,19 @@ def _interior_render(title, subtitle, floor_name, rooms, furniture, walls_h, wal
 
 def gen_render_interior_f1():
     """一层室内俯视效果图"""
-    X1=F1_X1; Y0=F1_Y0; Y1=F1_Y1; NX1=F1_NX1; NX2=F1_NX2; MX1=F1_MX1; MY1=F1_MY1
+    X1=F1_X1; Y0=F1_Y0; Y1=F1_Y1; NX1=F1_NX1; NX2=F1_NX2
 
     rooms = [
         (OW, OW, X1-OW, Y0-OW, "客厅"),
         (X1+IW, OW, BW-OW-X1-IW, Y0-OW, "玄关"),
         (OW, Y0+IW, X1-OW, Y1-Y0-IW, "LDK"),
-        (X1+IW, Y0+IW, MX1-X1-IW, Y1-Y0-IW, "主卧"),
-        (MX1+IW, Y0+IW, BW-OW-MX1-IW, MY1-Y0-IW, "主卫"),
-        (MX1+IW, MY1+IW, BW-OW-MX1-IW, Y1-MY1-IW, "衣帽间"),
+        (X1+IW, Y0+IW, BW-OW-X1-IW, Y1-Y0-IW, "主卧"),
         (OW, Y1+IW, NX1-OW, BH-OW-Y1-IW, "厨房"),
-        (NX1+IW, Y1+IW, NX2-NX1-IW, BH-OW-Y1-IW, "客卫"),
+        (NX1+IW, Y1+IW, NX2-NX1-IW, BH-OW-Y1-IW, "卫浴"),
         (NX2+IW, Y1+IW, BW-OW-NX2-IW, BH-OW-Y1-IW, "楼梯"),
     ]
-    walls_h = [(OW,Y0,X1-OW),(X1+IW,Y0,BW-OW-X1-IW),(OW,Y1,BW-2*OW),
-               (MX1+IW,MY1,BW-OW-MX1-IW)]
-    walls_v = [(X1,OW,Y1-OW),(MX1,Y0+IW,Y1-Y0-IW),(NX1,Y1+IW,BH-OW-Y1-IW),(NX2,Y1+IW,BH-OW-Y1-IW)]
+    walls_h = [(OW,Y0,X1-OW),(X1+IW,Y0,BW-OW-X1-IW),(OW,Y1,BW-2*OW)]
+    walls_v = [(X1,OW,Y1-OW),(NX1,Y1+IW,BH-OW-Y1-IW),(NX2,Y1+IW,BH-OW-Y1-IW)]
     windows = [
         (1000,0,5000,OW,"h"),
         (800,BH,2500,OW,"h"),(NX1+IW+200,BH,1000,OW,"h"),(NX2+IW+1500,BH,3500,OW,"h"),
@@ -1552,11 +1523,8 @@ def gen_render_interior_f1():
         ("tv", 1000, Y0+IW+200, 2500),
         ("dining", 5500, 4800),
         ("kitchen_L", OW+100, Y1+IW+100, 4300, BH-OW-Y1-IW-200),
-        ("bed_d", X1+IW+500, Y0+IW+1200, 1800, 2000),
-        ("wardrobe", MX1+IW+100, MY1+IW+200, BW-OW-MX1-IW-200, 500),
-        ("toilet", MX1+IW+400, Y0+IW+500),
-        ("sink", MX1+IW+300, MY1-500),
-        ("shower", MX1+IW+800, Y0+IW+200, 800),
+        ("bed_d", X1+IW+800, Y0+IW+1200, 1800, 2000),
+        ("wardrobe", X1+IW+200, Y1-700, BW-OW-X1-IW-400, 500),
         ("toilet", NX1+IW+400, Y1+IW+500),
         ("sink", NX1+IW+300, BH-OW-600),
         ("stairs", NX2+IW+400, Y1+IW+300, 2800, 3000, 14),
@@ -1566,16 +1534,14 @@ def gen_render_interior_f1():
         ("label", (OW+X1)/2, (OW+Y0)/2, "客厅"),
         ("label", (X1+BW)/2, (OW+Y0)/2, "玄关"),
         ("label", (OW+X1)/2, (Y0+Y1)/2, "客餐厅 LDK"),
-        ("label", (X1+MX1)/2, (Y0+Y1)/2, "主卧1"),
-        ("label", (MX1+BW)/2, (Y0+MY1)/2, "主卫1"),
-        ("label", (MX1+BW)/2, (MY1+Y1)/2, "衣帽间"),
+        ("label", (X1+BW)/2, (Y0+Y1)/2, "主卧1"),
         ("label", (OW+NX1)/2, (Y1+BH)/2, "厨房"),
-        ("label", (NX1+NX2)/2, (Y1+BH)/2, "客卫"),
+        ("label", (NX1+NX2)/2, (Y1+BH)/2, "卫浴"),
         ("label", (NX2+BW)/2, (Y1+BH)/2, "楼梯间"),
         ("light", 4000, 1200), ("light", 11000, 1200),
         ("light", 4000, 4700), ("light", 5500, 4200),
         ("light", 2500, 9000), ("light", 5700, 9000), ("light", 10500, 9000),
-        ("light", 10000, 4700), ("light", 13000, 3200),
+        ("light", 10500, 4700),
         ("plant", 500, 500), ("plant", 7500, 500), ("plant", 500, 6500),
     ]
     _interior_render("一层室内俯视效果图", "Ground Floor Interior Rendering  |  实物家具渲染  |  14m × 11m",
@@ -1592,11 +1558,11 @@ def gen_render_interior_f2():
     rooms = [
         (OW,OW,BW-2*OW,Y0-OW,"阳台"),
         (OW,Y0+IW,X1-OW,Y1-Y0-IW,"次卧"),
-        (X1+IW,Y0+IW,BW-OW-X1-IW,Y1-Y0-IW,"次卧"),
+        (X1+IW,Y0+IW,BW-OW-X1-IW,Y1-Y0-IW,"多功能区"),
         (OW,Y1+IW,BW-2*OW,Y2-Y1-IW,"走廊"),
         (OW,Y2+IW,NX1-OW,BH-OW-Y2-IW,"主卧"),
         (NX1+IW,Y2+IW,NX2-NX1-IW,BH-OW-Y2-IW,"主卫"),
-        (NX2+IW,Y2+IW,NX3-NX2-IW,BH-OW-Y2-IW,"主卧"),
+        (NX2+IW,Y2+IW,NX3-NX2-IW,BH-OW-Y2-IW,"留空"),
         (NX3+IW,Y2+IW,BW-OW-NX3-IW,(BH-OW-Y2-IW)//2,"公卫"),
         (NX3+IW,YM+IW,BW-OW-NX3-IW,(BH-OW-Y2-IW)//2-IW,"楼梯"),
     ]
@@ -1605,10 +1571,10 @@ def gen_render_interior_f2():
     walls_v = [(X1,Y0+IW,Y1-Y0-IW),(NX1,Y2+IW,BH-OW-Y2-IW),
                (NX2,Y2+IW,BH-OW-Y2-IW),(NX3,Y2+IW,BH-OW-Y2-IW)]
     windows = [
-        (1000,BH,2500,OW,"h"),(NX1+300,BH,1500,OW,"h"),(NX2+500,BH,2000,OW,"h"),
+        (1000,BH,3000,OW,"h"),(NX1+300,BH,1500,OW,"h"),(NX2+500,BH,2000,OW,"h"),
         (0,8000,OW,2000,"v"),(0,Y0+500,OW,2000,"v"),
-        (1200,Y0,2000,IW,"h"),(X1+500,Y0,3000,IW,"h"),(X1+4500,Y0,2000,IW,"h"),
-        (BW,8500,OW,2000,"v"),(BW,Y0+500,OW,2000,"v"),
+        (1200,Y0,2000,IW,"h"),(5500,Y0,4000,IW,"h"),(10500,Y0,2000,IW,"h"),
+        (BW,8500,OW,2000,"v"),(BW,Y0+500,OW,2500,"v"),
     ]
     furniture = [
         ("bed_d", 1500, 7800, 1800, 2000),
@@ -1616,11 +1582,8 @@ def gen_render_interior_f2():
         ("toilet", NX1+IW+500, 8000),
         ("sink", NX1+IW+400, 9600),
         ("shower", NX1+IW+200, 7500, 900),
-        ("bed_d", NX2+IW+400, 7800, 1800, 2000),
-        ("wardrobe", NX2+IW+200, 10100, NX3-NX2-IW-400, 500),
         ("bed_s", 1200, Y0+IW+300, 1200, 2000),
-        ("bed_d", X1+IW+1500, Y0+IW+300, 1800, 2000),
-        ("desk", X1+IW+5500, Y0+IW+800, 1400, 550),
+        ("desk", 1200, Y0+IW+2800, 1400, 550),
         ("toilet", NX3+IW+400, Y2+IW+400),
         ("sink", NX3+IW+300, YM-500),
         ("stairs", NX3+IW+200, YM+IW+200, 2200, BH-OW-YM-IW-400, 13),
@@ -1629,16 +1592,16 @@ def gen_render_interior_f2():
         ("door", 2500, Y2+IW, 900, 0, 90),
         ("door", NX2+IW+500, Y2+IW, 900, 0, 90),
         ("label", BW/2, Y0/2, "南向大阳台"),
-        ("label", (OW+X1)/2, (Y0+Y1)/2, "次卧1"),
-        ("label", (X1+BW)/2, (Y0+Y1)/2, "次卧2"),
+        ("label", (OW+X1)/2, (Y0+Y1)/2, "次卧"),
+        ("label", (X1+BW)/2, (Y0+Y1)/2, "多功能区"),
         ("label", BW/2, (Y1+Y2)/2, "走廊"),
         ("label", (OW+NX1)/2, (Y2+BH)/2, "主卧2"),
         ("label", (NX1+NX2)/2, (Y2+BH)/2, "主卫2"),
-        ("label", (NX2+NX3)/2, (Y2+BH)/2, "主卧3"),
+        ("label", (NX2+NX3)/2, (Y2+BH)/2, "留空区"),
         ("label", (NX3+BW)/2, (Y2+YM)/2, "公卫"),
         ("label", (NX3+BW)/2, (YM+BH)/2, "楼梯间"),
-        ("light", 3000, 8800), ("light", 6900, 8500), ("light", 9600, 8800),
-        ("light", 2000, 3500), ("light", 7500, 3500), ("light", 11000, 3000),
+        ("light", 3000, 8800), ("light", 6900, 8500),
+        ("light", 2000, 3500), ("light", 7500, 3500),
         ("light", 2000, 6200), ("light", 5000, 6200), ("light", 8000, 6200),
         ("light", 12200, 7800), ("light", 12200, 9500),
         ("light", 3000, 800), ("light", 7000, 800), ("light", 12000, 800),
