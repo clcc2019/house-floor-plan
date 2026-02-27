@@ -799,31 +799,157 @@ def _plumbing_dxf(floor_name, pipes_supply, pipes_drain, pipes_hot, fixtures, fi
 
 
 def _plumbing_png(title, floor_name, walls, pipes_s, pipes_d, pipes_h, fixtures, filename):
-    """给排水 PNG 预览"""
+    """给排水 PNG 专业预览：管径标注、立管编号、阀门水表、房间名称、增强图例"""
     fig, ax = plt.subplots(1,1,figsize=(16,13),dpi=150,facecolor=C_BG)
     ax.set_facecolor(C_BG); ax.set_aspect("equal"); ax.axis("off")
     ax.set_title(title, fontsize=16, fontweight="bold", color=C_TEXT, pad=12)
     s = _s
+    # 墙体
     for (x,y,w,h) in [(0,0,BW,OW),(0,BH-OW,BW,OW),(0,0,OW,BH),(BW-OW,0,OW,BH)]:
         ax.add_patch(patches.Rectangle((s(x),s(y)),s(w),s(h),facecolor="#E0E0E0",edgecolor=C_LINE,linewidth=0.3,zorder=2))
     ax.add_patch(patches.Rectangle((s(OW),s(OW)),s(BW-2*OW),s(BH-2*OW),facecolor=C_BG,edgecolor="none",zorder=1))
     for (x,y,w,h) in walls:
         ax.add_patch(patches.Rectangle((s(x),s(y)),s(w),s(h),facecolor="#E0E0E0",edgecolor=C_LINE,linewidth=0.2,zorder=2))
+
+    # 管线交叉检测：两线段是否相交，返回交点
+    def seg_intersect(a1,a2, b1,b2):
+        ax1,ay1=s(a1[0]),s(a1[1]); ax2,ay2=s(a2[0]),s(a2[1])
+        bx1,by1=s(b1[0]),s(b1[1]); bx2,by2=s(b2[0]),s(b2[1])
+        d=(ax2-ax1)*(by2-by1)-(ay2-ay1)*(bx2-bx1)
+        if abs(d)<1e-9: return None
+        t=((bx1-ax1)*(by2-by1)-(by1-ay1)*(bx2-bx1))/d
+        u=((ax2-ax1)*(by1-ay1)-(ay2-ay1)*(bx1-ax1))/d
+        if 0<=t<=1 and 0<=u<=1:
+            return (ax1+t*(ax2-ax1), ay1+t*(ay2-ay1))
+        return None
+
+    def draw_pipe_crossing_arc(ax, cx, cy, dx, dy, color, zorder):
+        """在交叉点画小弧线表示跨越（垂直于管线方向）"""
+        perp = (-dy, dx) if abs(dx)+abs(dy)>0 else (0.1, 0)
+        norm = (perp[0]**2+perp[1]**2)**0.5
+        if norm<1e-9: return
+        perp = (perp[0]/norm*0.15, perp[1]/norm*0.15)
+        pts = [(cx-perp[0], cy-perp[1]), (cx, cy), (cx+perp[0], cy+perp[1])]
+        ax.plot([p[0] for p in pts],[p[1] for p in pts], color=C_BG, linewidth=3, zorder=zorder-1)
+        ax.plot([p[0] for p in pts],[p[1] for p in pts], color=color, linewidth=2.5, zorder=zorder)
+
+    # 收集所有管线线段用于交叉检测
+    all_segments = []
+    for pts, dia, style in [(pipes_s,"DN25",("supply",C_WATER_SUPPLY)), (pipes_d,"DN110",("drain",C_WATER_DRAIN)), (pipes_h,"DN20",("hot",C_HOTWATER))]:
+        for plist in pts:
+            for i in range(len(plist)-1):
+                all_segments.append((plist[i],plist[i+1],style))
+
+    # 绘制给水管（蓝色实线 2.5）
     for pts in pipes_s:
-        ax.plot([s(p[0]) for p in pts],[s(p[1]) for p in pts],color=C_WATER_SUPPLY,linewidth=1.5,zorder=7)
+        for i in range(len(pts)-1):
+            p1,p2=pts[i],pts[i+1]
+            mx,my=(p1[0]+p2[0])/2,(p1[1]+p2[1])/2
+            ax.plot([s(p[0]) for p in [p1,p2]],[s(p[1]) for p in [p1,p2]],color=C_WATER_SUPPLY,linewidth=2.5,zorder=7)
+            rot=math.degrees(math.atan2(p2[1]-p1[1],p2[0]-p1[0]))
+            ax.text(s(mx),s(my),"DN25" if i==0 or (p1[0]==p2[0] and abs(p2[1]-p1[1])>3000) else "DN20",ha="center",va="center",fontsize=5,color=C_TEXT,bbox=dict(boxstyle="round,pad=0.15",facecolor="white",edgecolor="none"),rotation=rot if -90<rot<90 else rot+180,zorder=9)
+    # 绘制排水管（棕色虚线 2.5）
     for pts in pipes_d:
-        ax.plot([s(p[0]) for p in pts],[s(p[1]) for p in pts],color=C_WATER_DRAIN,linewidth=1.5,linestyle="--",zorder=7)
+        for i in range(len(pts)-1):
+            p1,p2=pts[i],pts[i+1]
+            mx,my=(p1[0]+p2[0])/2,(p1[1]+p2[1])/2
+            ax.plot([s(p[0]) for p in [p1,p2]],[s(p[1]) for p in [p1,p2]],color=C_WATER_DRAIN,linewidth=2.5,linestyle="--",zorder=7)
+            rot=math.degrees(math.atan2(p2[1]-p1[1],p2[0]-p1[0]))
+            ax.text(s(mx),s(my),"DN110" if abs(p2[0]-p1[0])<100 or abs(p2[1]-p1[1])>4000 else "DN50",ha="center",va="center",fontsize=5,color=C_TEXT,bbox=dict(boxstyle="round,pad=0.15",facecolor="white",edgecolor="none"),rotation=rot if -90<rot<90 else rot+180,zorder=9)
+    # 绘制热水管（红色实线 2.0）
     for pts in pipes_h:
-        ax.plot([s(p[0]) for p in pts],[s(p[1]) for p in pts],color=C_HOTWATER,linewidth=1.2,zorder=7)
+        for i in range(len(pts)-1):
+            p1,p2=pts[i],pts[i+1]
+            mx,my=(p1[0]+p2[0])/2,(p1[1]+p2[1])/2
+            ax.plot([s(p[0]) for p in [p1,p2]],[s(p[1]) for p in [p1,p2]],color=C_HOTWATER,linewidth=2.0,zorder=7)
+            rot=math.degrees(math.atan2(p2[1]-p1[1],p2[0]-p1[0]))
+            ax.text(s(mx),s(my),"DN20",ha="center",va="center",fontsize=5,color=C_TEXT,bbox=dict(boxstyle="round,pad=0.15",facecolor="white",edgecolor="none"),rotation=rot if -90<rot<90 else rot+180,zorder=9)
+
+    # 立管编号：收集给水/排水立管位置（建筑边界的垂直线端点）
+    riser_supply, riser_drain = [], []
+    def _near_edge(x,y):
+        return x<=600 or x>=BW-600 or y<=600 or y>=BH-600
+    for pts in pipes_s:
+        for pt in [pts[0], pts[-1]]:
+            if _near_edge(pt[0],pt[1]) and pt not in riser_supply: riser_supply.append(pt)
+    for pts in pipes_d:
+        for pt in [pts[0], pts[-1]]:
+            if _near_edge(pt[0],pt[1]) and pt not in riser_drain: riser_drain.append(pt)
+    for i, pt in enumerate(riser_supply):
+        ax.add_patch(patches.Circle((s(pt[0]),s(pt[1])),0.12,facecolor="white",edgecolor=C_WATER_SUPPLY,linewidth=1.5,zorder=10))
+        ax.text(s(pt[0]),s(pt[1]),f"JL-{i+1}",ha="center",va="center",fontsize=6,fontweight="bold",color=C_WATER_SUPPLY,zorder=11)
+    for i, pt in enumerate(riser_drain):
+        ax.add_patch(patches.Circle((s(pt[0]),s(pt[1])),0.12,facecolor="white",edgecolor=C_WATER_DRAIN,linewidth=1.5,zorder=10))
+        ax.text(s(pt[0]),s(pt[1]),f"WL-{i+1}",ha="center",va="center",fontsize=6,fontweight="bold",color=C_WATER_DRAIN,zorder=11)
+
+    # 阀门符号（蝴蝶形 ▷◁）：在每个 fixture 入口及主管分支处
+    def draw_valve(ax, x, y, color, zorder):
+        r = 0.06
+        t1 = plt.Polygon([(s(x)-r,s(y)), (s(x)+r*0.3,s(y)-r*0.6), (s(x)+r*0.3,s(y)+r*0.6)], facecolor="white", edgecolor=color, linewidth=1.2, zorder=zorder)
+        t2 = plt.Polygon([(s(x)+r,s(y)), (s(x)-r*0.3,s(y)-r*0.6), (s(x)-r*0.3,s(y)+r*0.6)], facecolor="white", edgecolor=color, linewidth=1.2, zorder=zorder)
+        ax.add_patch(t1); ax.add_patch(t2)
     for (x,y,txt,c) in fixtures:
-        ax.add_patch(patches.Circle((s(x),s(y)),0.08,facecolor=c,edgecolor=c,alpha=0.7,zorder=8))
-        ax.text(s(x),s(y)-0.18,txt,ha="center",va="top",fontsize=4.5,color=c,zorder=10)
-    lx,ly = s(BW)+1.0, s(BH)-0.5
-    ax.text(lx,ly+0.3,"图例",fontsize=8,fontweight="bold",color=C_TEXT,zorder=10)
-    for i,(c,txt) in enumerate([(C_WATER_SUPPLY,"给水管 DN20/25"),(C_WATER_DRAIN,"排水管 DN50/110"),(C_HOTWATER,"热水管 DN20")]):
-        yy = ly - i*0.4
-        ax.plot([lx,lx+0.5],[yy,yy],color=c,linewidth=2,zorder=10)
-        ax.text(lx+0.6,yy,txt,va="center",fontsize=6,color=C_TEXT,zorder=10)
+        draw_valve(ax, x, y, c, 9)
+    if pipes_s:
+        for pt in pipes_s[0][:2]:
+            draw_valve(ax, pt[0], pt[1], C_WATER_SUPPLY, 9)
+
+    # 水表符号（菱形+W）：入户处
+    if pipes_s:
+        inlet = pipes_s[0][0]
+        dx, dy = 0.1, 0.1
+        diamond = [(s(inlet[0]),s(inlet[1])+dy), (s(inlet[0])+dx,s(inlet[1])), (s(inlet[0]),s(inlet[1])-dy), (s(inlet[0])-dx,s(inlet[1]))]
+        ax.add_patch(plt.Polygon(diamond, facecolor="white", edgecolor=C_WATER_SUPPLY, linewidth=1.2, zorder=10))
+        ax.text(s(inlet[0]),s(inlet[1]),"W",ha="center",va="center",fontsize=7,fontweight="bold",color=C_WATER_SUPPLY,zorder=11)
+
+    # 房间名称（浅灰大字号，与平面图一致）
+    C_ROOM_LABEL = "#AAAAAA"
+    if floor_name == "一层":
+        X1,NX1,NX2,MX1,F1_Y0,F1_Y1,F1_MY1 = F1_X1,F1_NX1,F1_NX2,F1_MX1,F1_Y0,F1_Y1,F1_MY1
+        rooms = [((OW+X1)/2,(OW+F1_Y0)/2,"客厅"),((X1+BW)/2,(OW+F1_Y0)/2,"玄关"),((OW+X1)/2,(F1_Y0+F1_Y1)/2,"客餐厅 LDK"),
+                 ((X1+MX1)/2,(F1_Y0+F1_Y1)/2,"主卧室1"),((MX1+BW)/2,(F1_Y0+F1_MY1)/2,"主卫1"),((MX1+BW)/2,(F1_MY1+F1_Y1)/2,"衣帽间"),
+                 ((OW+NX1)/2,(F1_Y1+BH)/2,"厨房"),((NX1+NX2)/2,(F1_Y1+BH)/2,"客卫"),((NX2+BW)/2,(F1_Y1+BH)/2,"楼梯间")]
+    else:
+        X1,NX1,NX2,NX3,F2_Y0,F2_Y1,F2_Y2 = F2_X1,F2_NX1,F2_NX2,F2_NX3,F2_Y0,F2_Y1,F2_Y2
+        YM = F2_Y2+IW+(BH-OW-F2_Y2-IW)//2
+        rooms = [(BW/2,F2_Y0/2,"南向大阳台"),((OW+X1)/2,(F2_Y0+F2_Y1)/2,"次卧室1"),((X1+BW)/2,(F2_Y0+F2_Y1)/2,"次卧室2"),
+                 (BW/2,(F2_Y1+F2_Y2)/2,"走廊"),((OW+NX1)/2,(F2_Y2+BH)/2,"主卧室2"),((NX1+NX2)/2,(F2_Y2+BH)/2,"主卫2"),
+                 ((NX2+NX3)/2,(F2_Y2+BH)/2,"主卧室3"),((NX3+BW)/2,(F2_Y2+YM)/2,"公卫"),((NX3+BW)/2,(YM+BH)/2,"楼梯间")]
+    for cx,cy,name in rooms:
+        ax.text(s(cx),s(cy),name,ha="center",va="center",fontsize=14,color=C_ROOM_LABEL,zorder=4)
+
+    # 给水器具符号：淋浴头/水龙头轮廓
+    def fixture_shower(ax, x, y, color):
+        ax.add_patch(patches.Circle((s(x),s(y)),0.06,facecolor="white",edgecolor=color,linewidth=1,zorder=8))
+        for i in range(6):
+            ang = i*60 * math.pi/180
+            ax.plot([s(x),s(x)+0.08*math.cos(ang)],[s(y),s(y)+0.08*math.sin(ang)],color=color,linewidth=0.8,zorder=8)
+    def fixture_faucet(ax, x, y, color):
+        ax.add_patch(patches.Rectangle((s(x)-0.04,s(y)-0.03),0.08,0.06,facecolor="none",edgecolor=color,linewidth=1,zorder=8))
+        ax.plot([s(x)-0.02,s(x)+0.02],[s(y),s(y)],color=color,linewidth=1,zorder=8)
+    for (x,y,txt,c) in fixtures:
+        if "淋浴" in txt or "排水" in txt and "卫" in txt:
+            fixture_shower(ax, x-0.15, y, c) if "主卫" in txt else fixture_faucet(ax, x, y, c)
+        else:
+            fixture_faucet(ax, x, y, c)
+        ax.text(s(x),s(y)-0.22,txt,ha="center",va="top",fontsize=5,color=c,zorder=10)
+
+    # 增强图例
+    lx, ly = s(BW)+1.0, s(BH)-0.2
+    ax.text(lx,ly+0.5,"图例",fontsize=9,fontweight="bold",color=C_TEXT,zorder=10)
+    items = [(C_WATER_SUPPLY,"给水管 DN20/25","line",2.5,False),(C_WATER_DRAIN,"排水管 DN50/110","line",2.5,True),(C_HOTWATER,"热水管 DN20","line",2.0,False)]
+    for i,(c,txt,kind,lw,dash) in enumerate(items):
+        yy = ly - i*0.35
+        ax.plot([lx,lx+0.45],[yy,yy],color=c,linewidth=lw,linestyle="--" if dash else "-",zorder=10)
+        ax.text(lx+0.5,yy,txt,va="center",fontsize=6,color=C_TEXT,zorder=10)
+    ax.add_patch(patches.Circle((lx+0.22,ly-1.2),0.08,facecolor="white",edgecolor=C_WATER_SUPPLY,zorder=10))
+    ax.text(lx+0.35,ly-1.2,"立管 JL/WL",va="center",fontsize=6,color=C_TEXT,zorder=10)
+    draw_valve(ax, (lx+0.22)*1000, (ly-1.55)*1000, C_LINE, 10)
+    ax.text(lx+0.35,ly-1.55,"阀门",va="center",fontsize=6,color=C_TEXT,zorder=10)
+    dx2,dy2=0.08,0.08; dm=[(0,dy2),(dx2,0),(0,-dy2),(-dx2,0)]
+    ax.add_patch(plt.Polygon([(lx+0.22+d,ly-1.9+e) for d,e in dm],facecolor="white",edgecolor=C_WATER_SUPPLY,linewidth=1,zorder=10))
+    ax.text(lx+0.35,ly-1.9,"水表",va="center",fontsize=6,color=C_TEXT,zorder=10)
+
     nx,ny = -1.0,s(BH)-1.0
     ax.annotate("",xy=(nx,ny+0.7),xytext=(nx,ny),arrowprops=dict(arrowstyle="-|>",color=C_TEXT,lw=1.5),zorder=10)
     ax.text(nx,ny+0.85,"N",ha="center",va="bottom",fontsize=10,fontweight="bold",color=C_TEXT,zorder=10)
@@ -952,18 +1078,41 @@ def gen_electrical():
     ]
     _elec_dxf("二层", f2_lights, f2_sockets, f2_switches, "二层电气平面图")
 
-    # 生成电气 PNG
-    for floor_n, lights, sockets, switches, walls, fname in [
+    # 生成电气 PNG（专业电气符号 + 回路线 + 配电箱 +  room labels）
+    C_WIRE = "#AAAAAA"  # 回路控制线（浅灰虚线）
+    F1_ROOM_LABELS = [
+        ((OW+F1_X1)/2, (OW+F1_Y0)/2, "客厅"), ((F1_X1+BW)/2, (OW+F1_Y0)/2, "玄关"),
+        ((OW+F1_X1)/2, (F1_Y0+F1_Y1)/2, "LDK"), ((F1_X1+F1_MX1)/2, (F1_Y0+F1_Y1)/2, "主卧"),
+        ((F1_MX1+BW)/2, (F1_Y0+F1_MY1)/2, "主卫"), ((F1_MX1+BW)/2, (F1_MY1+F1_Y1)/2, "衣帽间"),
+        ((OW+F1_NX1)/2, (F1_Y1+BH)/2, "厨房"), ((F1_NX1+F1_NX2)/2, (F1_Y1+BH)/2, "客卫"),
+        ((F1_NX2+BW)/2, (F1_Y1+BH)/2, "楼梯间"),
+    ]
+    F2_YM = F2_Y2 + IW + (BH - OW - F2_Y2 - IW) // 2  # 公卫|楼梯分界Y
+    F2_ROOM_LABELS = [
+        (BW/2, F2_Y0/2, "阳台"), ((OW+F2_X1)/2, (F2_Y0+F2_Y1)/2, "次卧1"), ((F2_X1+BW)/2, (F2_Y0+F2_Y1)/2, "次卧2"),
+        (BW/2, (F2_Y1+F2_Y2)/2, "走廊"), ((OW+F2_NX1)/2, (F2_Y2+BH)/2, "主卧2"), ((F2_NX1+F2_NX2)/2, (F2_Y2+BH)/2, "主卫2"),
+        ((F2_NX2+F2_NX3)/2, (F2_Y2+BH)/2, "主卧3"), ((F2_NX3+BW)/2, (F2_Y2+F2_YM)/2, "公卫"),
+        ((F2_NX3+BW)/2, (F2_YM+BH)/2, "楼梯间"),
+    ]
+    def light_is_downlight(txt): return "筒灯" in txt or "射灯" in txt
+    def socket_is_16a(txt): return "16A" in txt or "空调" in txt or "油烟机" in txt
+
+    for floor_n, lights, sockets, switches, walls, fname, room_labels, db_x, db_y, circuit_pairs in [
         ("一层", f1_lights, f1_sockets, f1_switches,
          [(240,2200,7960,120),(8320,2200,BW-240-8320,120),(240,7200,BW-480,120),
           (8200,240,120,6960),(12000,2320,120,4880),(12120,4200,BW-240-12120,120),
           (4800,7320,120,BH-240-7320),(6600,7320,120,BH-240-7320)],
-         "一层电气平面图"),
+         "一层电气平面图", F1_ROOM_LABELS, F1_X1+IW+200, F1_Y0+IW+200,
+         [(2800,7200,2500,9000),(5000,7200,5700,9000),(7500,2400,4000,1200),
+          (4000,4500,4000,4700),(8500,2800,10000,4700),(12500,4500,13000,3200)]),
         ("二层", f2_lights, f2_sockets, f2_switches,
          [(240,1500,BW-480,120),(240,5200,BW-480,120),
           (240,7200,BW-480,120),(4800,1620,120,3580),
           (5800,7320,120,3440),(8000,7320,120,3440),(11200,7320,120,3440)],
-         "二层电气平面图"),
+         "二层电气平面图", F2_ROOM_LABELS, BW/2, F2_Y2+IW+200,
+         [(2800,7200,3000,8800),(8500,7200,9600,8800),(6200,7200,6900,8500),(11500,7200,12200,7800),
+          (2000,5000,2000,3500),(5500,5000,7500,3500),(2000,5505,3500,6200),(8000,7000,8000,6200),
+          (11800,7200,12200,9500),(3000,1700,5000,800)]),
     ]:
         fig, ax = plt.subplots(1,1,figsize=(18,14),dpi=150,facecolor=C_BG)
         ax.set_facecolor(C_BG); ax.set_aspect("equal"); ax.axis("off")
@@ -974,31 +1123,83 @@ def gen_electrical():
         ax.add_patch(patches.Rectangle((s(OW),s(OW)),s(BW-2*OW),s(BH-2*OW),facecolor=C_BG,edgecolor="none",zorder=1))
         for (x,y,w,h) in walls:
             ax.add_patch(patches.Rectangle((s(x),s(y)),s(w),s(h),facecolor="#E0E0E0",edgecolor=C_LINE,linewidth=0.2,zorder=2))
+
+        # 房间名称标注（大号浅灰字 8pt）
+        for rx, ry, rname in room_labels:
+            ax.text(s(rx), s(ry), rname, ha="center", va="center", fontsize=8, color="#999999", alpha=0.85, zorder=3)
+
+        # 回路线：开关→灯具 浅灰虚线
+        for sx, sy, lx, ly in circuit_pairs:
+            ax.plot([s(sx), s(lx)], [s(sy), s(ly)], color=C_WIRE, linestyle="--", linewidth=0.6, alpha=0.8, zorder=4)
+
+        # 配电箱符号
+        ax.add_patch(patches.Rectangle((s(db_x)-0.08, s(db_y)-0.06), 0.16, 0.12, facecolor="#E8E8E8", edgecolor=C_LINE, linewidth=0.5, zorder=7))
+        ax.text(s(db_x), s(db_y), "DB", ha="center", va="center", fontsize=6, fontweight="bold", color=C_TEXT, zorder=8)
+        ax.text(s(db_x)+0.22, s(db_y)+0.02, "总进线 BV10\n照明 BV2.5\n插座 BV2.5/4", ha="left", va="top", fontsize=5, color=C_TEXT2, zorder=8)
+
+        # 灯具：主灯⊕(空心圆+十字 r=0.15)、筒灯(实心小圆)
         for (x,y,txt) in lights:
-            ax.add_patch(patches.Circle((s(x),s(y)),0.12,facecolor="#FFC107",edgecolor=C_LINE,linewidth=0.5,alpha=0.8,zorder=8))
-            ax.plot([s(x)-0.07,s(x)+0.07],[s(y)-0.07,s(y)+0.07],color=C_LINE,linewidth=0.4,zorder=9)
-            ax.plot([s(x)-0.07,s(x)+0.07],[s(y)+0.07,s(y)-0.07],color=C_LINE,linewidth=0.4,zorder=9)
-            ax.text(s(x),s(y)-0.22,txt,ha="center",va="top",fontsize=4,color=C_TEXT2,zorder=10)
+            if light_is_downlight(txt):
+                ax.add_patch(patches.Circle((s(x), s(y)), 0.08, facecolor="#FFD54F", edgecolor=C_LINE, linewidth=0.3, zorder=8))
+            else:
+                ax.add_patch(patches.Circle((s(x), s(y)), 0.15, facecolor="none", edgecolor="#FFC107", linewidth=0.6, zorder=8))
+                ax.plot([s(x)-0.12, s(x)+0.12], [s(y), s(y)], color=C_LINE, linewidth=0.4, zorder=9)
+                ax.plot([s(x), s(x)], [s(y)-0.12, s(y)+0.12], color=C_LINE, linewidth=0.4, zorder=9)
+            ax.text(s(x), s(y)-0.28, txt, ha="center", va="top", fontsize=5, color=C_TEXT2, zorder=10)
+
+        # 插座：普通10A(半圆+竖线)、专用16A(方框+16A)
         for (x,y,txt) in sockets:
-            ax.add_patch(patches.Rectangle((s(x)-0.06,s(y)-0.04),0.12,0.08,facecolor="#4CAF50",edgecolor=C_LINE,linewidth=0.5,alpha=0.7,zorder=8))
-            ax.text(s(x),s(y)-0.15,txt,ha="center",va="top",fontsize=3.8,color=C_TEXT2,zorder=10)
+            if socket_is_16a(txt):
+                ax.add_patch(patches.Rectangle((s(x)-0.06, s(y)-0.05), 0.12, 0.10, facecolor="#4CAF50", edgecolor=C_LINE, linewidth=0.5, alpha=0.8, zorder=8))
+                ax.text(s(x), s(y), "16A", ha="center", va="center", fontsize=4.5, fontweight="bold", color="white", zorder=9)
+            else:
+                ax.add_patch(patches.Arc((s(x)-0.04, s(y)), 0.08, 0.12, theta1=270, theta2=90, color=C_LINE, linewidth=0.5, zorder=8))
+                ax.add_patch(patches.Arc((s(x)+0.04, s(y)), 0.08, 0.12, theta1=90, theta2=270, color=C_LINE, linewidth=0.5, zorder=8))
+                ax.plot([s(x), s(x)], [s(y)-0.06, s(y)+0.06], color=C_LINE, linewidth=0.5, zorder=8)
+                ax.add_patch(patches.Wedge((s(x)-0.04, s(y)), 0.06, 270, 90, facecolor="#4CAF50", edgecolor=C_LINE, linewidth=0.3, alpha=0.8, zorder=8))
+            ax.text(s(x), s(y)-0.22, txt, ha="center", va="top", fontsize=5, color=C_TEXT2, zorder=10)
+
+        # 开关：圆+斜线（单控/双控符号）
         for (x,y,txt) in switches:
-            ax.add_patch(patches.Circle((s(x),s(y)),0.06,facecolor="#FF9800",edgecolor=C_LINE,linewidth=0.5,zorder=8))
-            ax.plot([s(x),s(x)+0.12],[s(y),s(y)+0.06],color=C_LINE,linewidth=0.5,zorder=9)
-            ax.text(s(x),s(y)-0.15,txt,ha="center",va="top",fontsize=3.8,color=C_TEXT2,zorder=10)
-        lx,ly = s(BW)+1.2, s(BH)-0.5
-        ax.text(lx,ly+0.3,"图例",fontsize=9,fontweight="bold",color=C_TEXT,zorder=10)
-        ax.add_patch(patches.Circle((lx+0.1,ly),0.1,facecolor="#FFC107",edgecolor=C_LINE,linewidth=0.4,zorder=8))
-        ax.text(lx+0.3,ly,"灯具",va="center",fontsize=6,color=C_TEXT,zorder=10)
-        ax.add_patch(patches.Rectangle((lx+0.04,ly-0.44),0.12,0.08,facecolor="#4CAF50",edgecolor=C_LINE,linewidth=0.4,zorder=8))
-        ax.text(lx+0.3,ly-0.4,"插座",va="center",fontsize=6,color=C_TEXT,zorder=10)
-        ax.add_patch(patches.Circle((lx+0.1,ly-0.8),0.06,facecolor="#FF9800",edgecolor=C_LINE,linewidth=0.4,zorder=8))
-        ax.text(lx+0.3,ly-0.8,"开关",va="center",fontsize=6,color=C_TEXT,zorder=10)
-        nx,ny = -1.0,s(BH)-1.0
-        ax.annotate("",xy=(nx,ny+0.7),xytext=(nx,ny),arrowprops=dict(arrowstyle="-|>",color=C_TEXT,lw=1.5),zorder=10)
-        ax.text(nx,ny+0.85,"N",ha="center",va="bottom",fontsize=10,fontweight="bold",color=C_TEXT,zorder=10)
-        ax.set_xlim(-2.0,s(BW)+4.5); ax.set_ylim(-1.5,s(BH)+1.5)
-        fig.savefig(f"{IMG_DIR}/{fname}.png",bbox_inches="tight",pad_inches=0.3,dpi=150,facecolor=C_BG)
+            ax.add_patch(patches.Circle((s(x), s(y)), 0.08, facecolor="none", edgecolor="#FF9800", linewidth=0.6, zorder=8))
+            ax.plot([s(x)-0.05, s(x)+0.08], [s(y)+0.05, s(y)-0.06], color="#FF9800", linewidth=0.5, zorder=9)
+            if "床头" in txt:
+                ax.plot([s(x)+0.04, s(x)+0.10], [s(y)-0.02, s(y)+0.04], color="#FF9800", linewidth=0.4, zorder=9)
+            ax.text(s(x), s(y)-0.22, txt, ha="center", va="top", fontsize=5, color=C_TEXT2, zorder=10)
+
+        # 增强图例
+        lx, ly = s(BW)+1.2, s(BH)-0.2
+        ax.text(lx, ly+0.5, "图例", fontsize=9, fontweight="bold", color=C_TEXT, zorder=10)
+        ax.add_patch(patches.Circle((lx+0.12, ly+0.1), 0.12, facecolor="none", edgecolor="#FFC107", linewidth=0.5, zorder=8))
+        ax.plot([lx+0.0, lx+0.24], [ly+0.1, ly+0.1], color=C_LINE, linewidth=0.3, zorder=9)
+        ax.plot([lx+0.12, lx+0.12], [ly-0.02, ly+0.22], color=C_LINE, linewidth=0.3, zorder=9)
+        ax.text(lx+0.38, ly+0.1, "吸顶灯/主灯", va="center", fontsize=6, color=C_TEXT, zorder=10)
+        ax.add_patch(patches.Circle((lx+0.12, ly-0.35), 0.06, facecolor="#FFD54F", edgecolor=C_LINE, linewidth=0.3, zorder=8))
+        ax.text(lx+0.38, ly-0.35, "筒灯/射灯", va="center", fontsize=6, color=C_TEXT, zorder=10)
+        ax.add_patch(patches.Arc((lx+0.02, ly-0.78), 0.12, 0.18, theta1=270, theta2=90, color=C_LINE, linewidth=0.4, zorder=8))
+        ax.add_patch(patches.Wedge((lx+0.02, ly-0.78), 0.09, 270, 90, facecolor="#4CAF50", edgecolor=C_LINE, linewidth=0.2, alpha=0.8, zorder=8))
+        ax.plot([lx+0.02, lx+0.02], [ly-0.9, ly-0.66], color=C_LINE, linewidth=0.4, zorder=8)
+        ax.text(lx+0.38, ly-0.78, "普通插座 10A", va="center", fontsize=6, color=C_TEXT, zorder=10)
+        ax.add_patch(patches.Rectangle((lx+0.04, ly-1.18), 0.14, 0.10, facecolor="#4CAF50", edgecolor=C_LINE, linewidth=0.4, zorder=8))
+        ax.text(lx+0.11, ly-1.13, "16A", ha="center", va="center", fontsize=4.5, fontweight="bold", color="white", zorder=9)
+        ax.text(lx+0.38, ly-1.13, "专用插座 16A", va="center", fontsize=6, color=C_TEXT, zorder=10)
+        ax.add_patch(patches.Circle((lx+0.12, ly-1.53), 0.08, facecolor="none", edgecolor="#FF9800", linewidth=0.5, zorder=8))
+        ax.plot([lx+0.07, lx+0.20], [ly-1.47, ly-1.59], color="#FF9800", linewidth=0.4, zorder=9)
+        ax.text(lx+0.38, ly-1.53, "单控开关", va="center", fontsize=6, color=C_TEXT, zorder=10)
+        ax.add_patch(patches.Circle((lx+0.12, ly-1.88), 0.08, facecolor="none", edgecolor="#FF9800", linewidth=0.5, zorder=8))
+        ax.plot([lx+0.07, lx+0.20], [ly-1.82, ly-1.94], color="#FF9800", linewidth=0.4, zorder=9)
+        ax.plot([lx+0.16, lx+0.22], [ly-1.9, ly-1.86], color="#FF9800", linewidth=0.3, zorder=9)
+        ax.text(lx+0.38, ly-1.88, "双控开关", va="center", fontsize=6, color=C_TEXT, zorder=10)
+        ax.plot([lx+0.04, lx+0.22], [ly-2.18, ly-2.18], color=C_WIRE, linestyle="--", linewidth=0.5, zorder=8)
+        ax.text(lx+0.38, ly-2.18, "回路控制线", va="center", fontsize=6, color=C_TEXT, zorder=10)
+        ax.add_patch(patches.Rectangle((lx+0.04, ly-2.48), 0.16, 0.12, facecolor="#E8E8E8", edgecolor=C_LINE, linewidth=0.4, zorder=8))
+        ax.text(lx+0.12, ly-2.42, "DB", ha="center", va="center", fontsize=5, fontweight="bold", color=C_TEXT, zorder=9)
+        ax.text(lx+0.38, ly-2.42, "配电箱", va="center", fontsize=6, color=C_TEXT, zorder=10)
+        nx, ny = -1.0, s(BH)-1.0
+        ax.annotate("", xy=(nx, ny+0.7), xytext=(nx, ny), arrowprops=dict(arrowstyle="-|>", color=C_TEXT, lw=1.5), zorder=10)
+        ax.text(nx, ny+0.85, "N", ha="center", va="bottom", fontsize=10, fontweight="bold", color=C_TEXT, zorder=10)
+        ax.set_xlim(-2.0, s(BW)+4.5); ax.set_ylim(-1.5, s(BH)+1.5)
+        fig.savefig(f"{IMG_DIR}/{fname}.png", bbox_inches="tight", pad_inches=0.3, dpi=150, facecolor=C_BG)
         plt.close(fig)
     print("  ✓ 电气图 (DXF + PNG) × 2")
 
