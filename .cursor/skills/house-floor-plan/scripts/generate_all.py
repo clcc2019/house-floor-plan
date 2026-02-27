@@ -34,24 +34,14 @@ from building_config import (
 W_m = BW_M; D_m = BD_M
 
 import matplotlib.font_manager as fm
-_CJK_FONTS_ADDED = False
-for _p in ["/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc",
-           "/usr/share/fonts/opentype/noto/NotoSansCJK-Bold.ttc",
-           "/usr/share/fonts/opentype/noto/NotoSansCJK-Medium.ttc",
-           "/usr/share/fonts/opentype/noto/NotoSansCJK-Light.ttc",
-           "/usr/share/fonts/opentype/noto/NotoSansCJK-Black.ttc"]:
-    if os.path.exists(_p):
-        fm.fontManager.addfont(_p)
-        _CJK_FONTS_ADDED = True
-plt.rcParams["font.sans-serif"] = [
-    "Noto Sans CJK JP",        # TTC default index (covers CJK SC glyphs too)
-    "Noto Sans CJK SC",        # Linux
-    "WenQuanYi Micro Hei",     # Linux fallback
-    "PingFang SC",              # macOS
-    "Microsoft YaHei",          # Windows
-    "SimHei",                   # Windows fallback
-    "Arial Unicode MS",         # Cross-platform
-]
+
+_FONT_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "fonts")
+_FONT_REGULAR = os.path.join(_FONT_DIR, "NotoSansSC-Subset.ttf")
+_FONT_BOLD = os.path.join(_FONT_DIR, "NotoSansSC-Subset-Bold.ttf")
+for _fp in [_FONT_REGULAR, _FONT_BOLD]:
+    if os.path.exists(_fp):
+        fm.fontManager.addfont(_fp)
+plt.rcParams["font.sans-serif"] = ["Noto Sans CJK SC"]
 plt.rcParams["axes.unicode_minus"] = False
 
 BASE = os.path.join(os.getcwd(), "图纸")
@@ -311,6 +301,8 @@ class FloorPlan:
         self.ax.set_ylim(-margin, s(self.H)+margin*0.6)
         self.ax.set_title(self.title, fontsize=16, fontweight="bold", color=C_TEXT, pad=10)
         self.fig.savefig(filepath, bbox_inches="tight", pad_inches=0.3, dpi=150, facecolor=C_BG)
+        svg_path = filepath.replace(".png", ".svg")
+        self.fig.savefig(svg_path, format='svg', bbox_inches="tight", pad_inches=0.3, facecolor=C_BG)
         plt.close(self.fig)
 
 
@@ -628,6 +620,7 @@ def _elev_png(title, width_m, windows, doors, filename, has_balcony=False):
 
     ax.set_xlim(-2.5,w+1.5); ax.set_ylim(-1.5,TOP+1.0)
     fig.savefig(f"{IMG_DIR}/{filename}.png",bbox_inches="tight",pad_inches=0.3,dpi=150,facecolor=C_BG)
+    fig.savefig(f"{IMG_DIR}/{filename}.svg", format='svg', bbox_inches="tight", pad_inches=0.3, facecolor=C_BG)
     plt.close(fig)
 
 
@@ -724,6 +717,7 @@ def gen_section():
     ax.text(3.5,F2_FL+F2H/2,"二层 F2",ha="center",va="center",fontsize=12,color=C_TEXT2,zorder=10)
     ax.set_xlim(-2.5,D_m+2.5); ax.set_ylim(-1.2,TOP+1.0)
     fig.savefig(f"{IMG_DIR}/1-1剖面图.png",bbox_inches="tight",pad_inches=0.3,dpi=150,facecolor=C_BG)
+    fig.savefig(f"{IMG_DIR}/1-1剖面图.svg", format='svg', bbox_inches="tight", pad_inches=0.3, facecolor=C_BG)
     plt.close(fig)
     print("  ✓ 1-1剖面图 (DXF + PNG)")
 
@@ -776,6 +770,7 @@ def gen_roof():
     ax.text(nx,ny+0.85,"N",ha="center",va="bottom",fontsize=10,fontweight="bold",color=C_TEXT,zorder=10)
     ax.set_xlim(-2.0,s(BW)+2.0); ax.set_ylim(-1.5,s(BH)+1.5)
     fig.savefig(f"{IMG_DIR}/屋顶平面图.png",bbox_inches="tight",pad_inches=0.3,dpi=150,facecolor=C_BG)
+    fig.savefig(f"{IMG_DIR}/屋顶平面图.svg", format='svg', bbox_inches="tight", pad_inches=0.3, facecolor=C_BG)
     plt.close(fig)
     print("  ✓ 屋顶平面图 (DXF + PNG)")
 
@@ -937,6 +932,7 @@ def _plumbing_png(title, floor_name, walls, pipes_s, pipes_d, pipes_h, fixtures,
     ax.text(nx,ny+0.85,"N",ha="center",va="bottom",fontsize=10,fontweight="bold",color=C_TEXT,zorder=10)
     ax.set_xlim(-2.0,s(BW)+4.0); ax.set_ylim(-1.5,s(BH)+1.5)
     fig.savefig(f"{IMG_DIR}/{filename}.png",bbox_inches="tight",pad_inches=0.3,dpi=150,facecolor=C_BG)
+    fig.savefig(f"{IMG_DIR}/{filename}.svg", format='svg', bbox_inches="tight", pad_inches=0.3, facecolor=C_BG)
     plt.close(fig)
 
 
@@ -1182,6 +1178,7 @@ def gen_electrical():
         ax.text(nx, ny+0.85, "N", ha="center", va="bottom", fontsize=10, fontweight="bold", color=C_TEXT, zorder=10)
         ax.set_xlim(-2.0, s(BW)+4.5); ax.set_ylim(-1.5, s(BH)+1.5)
         fig.savefig(f"{IMG_DIR}/{fname}.png", bbox_inches="tight", pad_inches=0.3, dpi=150, facecolor=C_BG)
+        fig.savefig(f"{IMG_DIR}/{fname}.svg", format='svg', bbox_inches="tight", pad_inches=0.3, facecolor=C_BG)
         plt.close(fig)
     print("  ✓ 电气图 (DXF + PNG) × 2")
 
@@ -1372,6 +1369,7 @@ def gen_render_south():
     ax.set_xlim(-3, W_m + 3)
     ax.set_ylim(-1.8, TOP + 3.5)
     fig.savefig(f"{IMG_DIR}/南立面渲染效果图.png", bbox_inches="tight", pad_inches=0.2, dpi=200, facecolor="#E8F0F8")
+    fig.savefig(f"{IMG_DIR}/南立面渲染效果图.svg", format='svg', bbox_inches="tight", pad_inches=0.3, facecolor="#E8F0F8")
     plt.close(fig)
     print("  ✓ 南立面渲染效果图 (PNG)")
 
@@ -1484,6 +1482,7 @@ def _interior_render(title, subtitle, floor_name, rooms, furniture, walls_h, wal
 
     ax.set_xlim(-0.5, s(BW)+0.5); ax.set_ylim(-0.5, s(BH)+0.5)
     fig.savefig(f"{IMG_DIR}/{filename}.png",bbox_inches="tight",pad_inches=0.2,dpi=200,facecolor="#F5F2ED")
+    fig.savefig(f"{IMG_DIR}/{filename}.svg", format='svg', bbox_inches="tight", pad_inches=0.3, facecolor="#F5F2ED")
     plt.close(fig)
 
 

@@ -26,7 +26,7 @@ from building_config import (
 
 OUT = os.path.join(os.getcwd(), "docs", "images")
 os.makedirs(OUT, exist_ok=True)
-W, H = 2400, 1600
+W, H = 3600, 2400
 
 
 class Camera:
@@ -251,19 +251,13 @@ def _add_glow(img, x, y, radius=25, color=(255,240,200), alpha=30):
 
 
 def _get_fonts():
-    font_paths = [
-        "/usr/share/fonts/opentype/noto/NotoSansCJK-Bold.ttc",
-        "/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc",
-        "/usr/share/fonts/truetype/arphic/uming.ttc",
-        "/System/Library/Fonts/PingFang.ttc",
-        "C:/Windows/Fonts/msyh.ttc",
-    ]
-    for fp in font_paths:
-        if os.path.exists(fp):
-            try:
-                return ImageFont.truetype(fp, 42), ImageFont.truetype(fp, 20)
-            except Exception:
-                continue
+    _font_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "fonts")
+    bold = os.path.join(_font_dir, "NotoSansSC-Subset-Bold.ttf")
+    regular = os.path.join(_font_dir, "NotoSansSC-Subset.ttf")
+    try:
+        return ImageFont.truetype(bold, 64), ImageFont.truetype(regular, 30)
+    except Exception:
+        pass
     return ImageFont.load_default(), ImageFont.load_default()
 
 

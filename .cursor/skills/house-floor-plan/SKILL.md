@@ -19,6 +19,7 @@ scripts/building_config.py    ← 唯一数据源 (Single Source of Truth)
   ├── 窗户定义 (SOUTH_WIN/NORTH_WIN/EAST_WIN/WEST_WIN — 全朝向统一)
   └── 立面参数 (DARK_STONE_X/SOUTH_DOOR — 外观特征)
 
+scripts/fonts/                ← 内嵌中文字体 (Noto Sans SC 子集, ~530KB, 无需系统字体)
 scripts/generate_all.py       ← 全套图纸 (从 building_config 导入)
 scripts/generate_render_3d.py ← 3D透视渲染 (从 building_config 导入)
 ```
@@ -103,7 +104,7 @@ Cross-drawing consistency:
 - **Room label**: Chinese name (bold) + English name (gray) + dimensions (gray), centered
 - **Dimensions**: exterior segmented (-700mm offset) + total (-1400mm offset)
 - **Export**: DXF (AutoCAD R2010, mm units) + PNG (150dpi, 效果图200dpi)
-- **CJK Font**: 自动检测系统中文字体 (Noto Sans CJK / PingFang / Microsoft YaHei)
+- **CJK Font**: 内嵌子集字体 `fonts/NotoSansSC-Subset.ttf` (265KB) + Bold (266KB)，无需依赖系统字体
 
 ## Drawing Quality Standards
 
