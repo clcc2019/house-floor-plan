@@ -33,9 +33,19 @@ from building_config import (
 
 W_m = BW_M; D_m = BD_M
 
+import matplotlib.font_manager as fm
+_CJK_FONTS_ADDED = False
+for _p in ["/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc",
+           "/usr/share/fonts/opentype/noto/NotoSansCJK-Bold.ttc",
+           "/usr/share/fonts/opentype/noto/NotoSansCJK-Medium.ttc",
+           "/usr/share/fonts/opentype/noto/NotoSansCJK-Light.ttc",
+           "/usr/share/fonts/opentype/noto/NotoSansCJK-Black.ttc"]:
+    if os.path.exists(_p):
+        fm.fontManager.addfont(_p)
+        _CJK_FONTS_ADDED = True
 plt.rcParams["font.sans-serif"] = [
-    "Noto Sans CJK SC",        # Linux (Ubuntu/Debian)
-    "Noto Sans SC",             # Alternate Noto name
+    "Noto Sans CJK JP",        # TTC default index (covers CJK SC glyphs too)
+    "Noto Sans CJK SC",        # Linux
     "WenQuanYi Micro Hei",     # Linux fallback
     "PingFang SC",              # macOS
     "Microsoft YaHei",          # Windows
@@ -43,14 +53,6 @@ plt.rcParams["font.sans-serif"] = [
     "Arial Unicode MS",         # Cross-platform
 ]
 plt.rcParams["axes.unicode_minus"] = False
-import matplotlib.font_manager as fm
-_CJK_FONT_PATH = None
-for _p in ["/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc",
-           "/usr/share/fonts/opentype/noto/NotoSansCJK-Bold.ttc"]:
-    if os.path.exists(_p):
-        _CJK_FONT_PATH = _p
-        fm.fontManager.addfont(_p)
-        break
 
 BASE = os.path.join(os.getcwd(), "图纸")
 IMG_DIR = os.path.join(os.getcwd(), "docs", "images")
