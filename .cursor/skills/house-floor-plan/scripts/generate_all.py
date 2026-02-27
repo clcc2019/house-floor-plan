@@ -20,6 +20,7 @@ plt.rcParams["font.sans-serif"] = ["PingFang HK", "Hiragino Sans GB", "Heiti TC"
 plt.rcParams["axes.unicode_minus"] = False
 
 BASE = os.path.join(os.getcwd(), "图纸")
+IMG_DIR = os.path.join(os.getcwd(), "docs", "images")
 DIRS = {
     "平面图": f"{BASE}/01-建筑设计/平面图",
     "立面图": f"{BASE}/01-建筑设计/立面图",
@@ -29,7 +30,7 @@ DIRS = {
     "电气":   f"{BASE}/03-电气设计",
     "效果图": f"{BASE}/04-效果图",
 }
-for d in DIRS.values():
+for d in list(DIRS.values()) + [IMG_DIR]:
     os.makedirs(d, exist_ok=True)
 
 # ── 颜色 ──
@@ -425,7 +426,7 @@ def gen_floor1():
     fp.dim_v(0, Y0, BW); fp.dim_v(Y0, Y1, BW); fp.dim_v(Y1, BH, BW)
     fp.dim_total_v(0, BH, BW)
     fp.info_block("一层"); fp.north_arrow()
-    fp.save(f"{DIRS['平面图']}/一层平面图.png")
+    fp.save(f"{IMG_DIR}/一层平面图.png")
     print("  ✓ 一层平面图 (DXF + PNG)")
 
 
@@ -542,7 +543,7 @@ def gen_floor2():
     fp.dim_v(0,Y0,BW); fp.dim_v(Y0,Y1,BW); fp.dim_v(Y1,Y2,BW); fp.dim_v(Y2,BH,BW); fp.dim_total_v(0,BH,BW)
     fp.dim_h(0,NX1,BH); fp.dim_h(NX1,NX2,BH); fp.dim_h(NX2,NX3,BH); fp.dim_h(NX3,BW,BH)
     fp.info_block("二层"); fp.north_arrow()
-    fp.save(f"{DIRS['平面图']}/二层平面图.png")
+    fp.save(f"{IMG_DIR}/二层平面图.png")
     print("  ✓ 二层平面图 (DXF + PNG)")
 
 
@@ -643,7 +644,7 @@ def _elev_png(title, width_m, windows, doors, filename, has_balcony=False):
     dim_v(GL,TOP,w)
 
     ax.set_xlim(-2.5,w+1.5); ax.set_ylim(-1.5,TOP+1.0)
-    fig.savefig(f"{DIRS['立面图']}/{filename}.png",bbox_inches="tight",pad_inches=0.3,dpi=150,facecolor=C_BG)
+    fig.savefig(f"{IMG_DIR}/{filename}.png",bbox_inches="tight",pad_inches=0.3,dpi=150,facecolor=C_BG)
     plt.close(fig)
 
 
@@ -770,7 +771,7 @@ def gen_section():
     ax.text(3.5,F1_FL+F1H/2,"一层 F1",ha="center",va="center",fontsize=12,color=C_TEXT2,zorder=10)
     ax.text(3.5,F2_FL+F2H/2,"二层 F2",ha="center",va="center",fontsize=12,color=C_TEXT2,zorder=10)
     ax.set_xlim(-2.5,D_m+2.5); ax.set_ylim(-1.2,TOP+1.0)
-    fig.savefig(f"{DIRS['剖面图']}/1-1剖面图.png",bbox_inches="tight",pad_inches=0.3,dpi=150,facecolor=C_BG)
+    fig.savefig(f"{IMG_DIR}/1-1剖面图.png",bbox_inches="tight",pad_inches=0.3,dpi=150,facecolor=C_BG)
     plt.close(fig)
     print("  ✓ 1-1剖面图 (DXF + PNG)")
 
@@ -822,7 +823,7 @@ def gen_roof():
     ax.annotate("",xy=(nx,ny+0.7),xytext=(nx,ny),arrowprops=dict(arrowstyle="-|>",color=C_TEXT,lw=1.5),zorder=10)
     ax.text(nx,ny+0.85,"N",ha="center",va="bottom",fontsize=10,fontweight="bold",color=C_TEXT,zorder=10)
     ax.set_xlim(-2.0,s(BW)+2.0); ax.set_ylim(-1.5,s(BH)+1.5)
-    fig.savefig(f"{DIRS['屋顶']}/屋顶平面图.png",bbox_inches="tight",pad_inches=0.3,dpi=150,facecolor=C_BG)
+    fig.savefig(f"{IMG_DIR}/屋顶平面图.png",bbox_inches="tight",pad_inches=0.3,dpi=150,facecolor=C_BG)
     plt.close(fig)
     print("  ✓ 屋顶平面图 (DXF + PNG)")
 
@@ -877,7 +878,7 @@ def _plumbing_png(title, floor_name, walls, pipes_s, pipes_d, pipes_h, fixtures,
     ax.annotate("",xy=(nx,ny+0.7),xytext=(nx,ny),arrowprops=dict(arrowstyle="-|>",color=C_TEXT,lw=1.5),zorder=10)
     ax.text(nx,ny+0.85,"N",ha="center",va="bottom",fontsize=10,fontweight="bold",color=C_TEXT,zorder=10)
     ax.set_xlim(-2.0,s(BW)+4.0); ax.set_ylim(-1.5,s(BH)+1.5)
-    fig.savefig(f"{DIRS['给排水']}/{filename}.png",bbox_inches="tight",pad_inches=0.3,dpi=150,facecolor=C_BG)
+    fig.savefig(f"{IMG_DIR}/{filename}.png",bbox_inches="tight",pad_inches=0.3,dpi=150,facecolor=C_BG)
     plt.close(fig)
 
 
@@ -1047,7 +1048,7 @@ def gen_electrical():
         ax.annotate("",xy=(nx,ny+0.7),xytext=(nx,ny),arrowprops=dict(arrowstyle="-|>",color=C_TEXT,lw=1.5),zorder=10)
         ax.text(nx,ny+0.85,"N",ha="center",va="bottom",fontsize=10,fontweight="bold",color=C_TEXT,zorder=10)
         ax.set_xlim(-2.0,s(BW)+4.5); ax.set_ylim(-1.5,s(BH)+1.5)
-        fig.savefig(f"{DIRS['电气']}/{fname}.png",bbox_inches="tight",pad_inches=0.3,dpi=150,facecolor=C_BG)
+        fig.savefig(f"{IMG_DIR}/{fname}.png",bbox_inches="tight",pad_inches=0.3,dpi=150,facecolor=C_BG)
         plt.close(fig)
     print("  ✓ 电气图 (DXF + PNG) × 2")
 
@@ -1135,7 +1136,7 @@ def gen_render_south():
     ax.text(W_m/2,TOP+2.5,"南立面渲染效果图",ha="center",va="center",fontsize=20,fontweight="bold",color="#4A5A6A",zorder=10)
     ax.text(W_m/2,TOP+2.0,"South Elevation Rendering  |  现代简约风格  |  14m × 11m  |  二层别墅",ha="center",va="center",fontsize=9,color="#8A8A8A",zorder=10)
     ax.set_xlim(-3,W_m+3); ax.set_ylim(-1.8,TOP+3.5)
-    fig.savefig(f"{DIRS['效果图']}/南立面渲染效果图.png",bbox_inches="tight",pad_inches=0.2,dpi=200,facecolor="#E8F0F8")
+    fig.savefig(f"{IMG_DIR}/南立面渲染效果图.png",bbox_inches="tight",pad_inches=0.2,dpi=200,facecolor="#E8F0F8")
     plt.close(fig)
     print("  ✓ 南立面渲染效果图 (PNG)")
 
@@ -1247,7 +1248,7 @@ def _interior_render(title, subtitle, floor_name, rooms, furniture, walls_h, wal
             ax.add_patch(patches.Circle((s(x),s(y)),0.08,facecolor="#4A8A3A",edgecolor="#3A6A2A",linewidth=0.3,zorder=8))
 
     ax.set_xlim(-0.5, s(BW)+0.5); ax.set_ylim(-0.5, s(BH)+0.5)
-    fig.savefig(f"{DIRS['效果图']}/{filename}.png",bbox_inches="tight",pad_inches=0.2,dpi=200,facecolor="#F5F2ED")
+    fig.savefig(f"{IMG_DIR}/{filename}.png",bbox_inches="tight",pad_inches=0.2,dpi=200,facecolor="#F5F2ED")
     plt.close(fig)
 
 
