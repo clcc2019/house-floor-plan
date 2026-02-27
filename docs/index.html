@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>现代简约别墅 — 全套建筑图纸</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f6f3ee;--bg2:#eae5dc;--text:#2a2520;--text2:#6b6259;--accent:#8b7355;
+  --accent2:#b89e78;--card:#fff;--border:#d8d0c4;--shadow:0 2px 20px rgba(42,37,32,.06);
+  --radius:6px;--font-display:'Noto Serif SC',serif;--font-body:'DM Sans',sans-serif;
+}
+html{scroll-behavior:smooth;font-size:16px}
+body{font-family:var(--font-body);background:var(--bg);color:var(--text);line-height:1.6;-webkit-font-smoothing:antialiased}
+
+.hero{
+  position:relative;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;padding:4rem 2rem;overflow:hidden;
+  background:linear-gradient(175deg,#e8e2d5 0%,#f0ebe2 40%,#f6f3ee 100%);
+}
+.hero::before{
+  content:'';position:absolute;inset:0;
+  background:repeating-linear-gradient(90deg,transparent,transparent 119px,var(--border) 119px,var(--border) 120px),
+             repeating-linear-gradient(0deg,transparent,transparent 119px,var(--border) 119px,var(--border) 120px);
+  opacity:.15;pointer-events:none;
+}
+.hero::after{
+  content:'';position:absolute;bottom:0;left:0;right:0;height:120px;
+  background:linear-gradient(transparent,var(--bg));pointer-events:none;
+}
+.hero-badge{
+  display:inline-flex;align-items:center;gap:.5rem;padding:.4rem 1rem;
+  background:var(--accent);color:#fff;font-size:.7rem;letter-spacing:.15em;
+  text-transform:uppercase;border-radius:2px;margin-bottom:2rem;
+  animation:fadeDown .8s ease both;
+}
+.hero h1{
+  font-family:var(--font-display);font-size:clamp(2.2rem,5vw,4rem);font-weight:700;
+  line-height:1.15;letter-spacing:-.02em;margin-bottom:1rem;color:var(--text);
+  animation:fadeDown .8s .15s ease both;
+}
+.hero h1 em{font-style:normal;color:var(--accent)}
+.hero-sub{
+  font-size:clamp(.95rem,1.8vw,1.15rem);color:var(--text2);max-width:36rem;
+  line-height:1.7;animation:fadeDown .8s .3s ease both;
+}
+.hero-stats{
+  display:flex;gap:3rem;margin-top:2.5rem;animation:fadeDown .8s .45s ease both;
+}
+.hero-stats .stat{text-align:center}
+.hero-stats .stat-val{font-family:var(--font-display);font-size:1.8rem;font-weight:700;color:var(--accent)}
+.hero-stats .stat-label{font-size:.75rem;color:var(--text2);letter-spacing:.08em;text-transform:uppercase;margin-top:.15rem}
+
+nav{
+  position:sticky;top:0;z-index:100;background:rgba(246,243,238,.92);
+  backdrop-filter:blur(12px);border-bottom:1px solid var(--border);
+}
+nav .nav-inner{
+  max-width:1200px;margin:0 auto;display:flex;align-items:center;gap:0;
+  overflow-x:auto;padding:0 1rem;scrollbar-width:none;
+}
+nav .nav-inner::-webkit-scrollbar{display:none}
+nav a{
+  display:block;padding:.9rem 1.2rem;font-size:.8rem;letter-spacing:.06em;
+  text-transform:uppercase;color:var(--text2);text-decoration:none;
+  white-space:nowrap;border-bottom:2px solid transparent;transition:all .2s;
+}
+nav a:hover,nav a.active{color:var(--accent);border-bottom-color:var(--accent)}
+
+main{max-width:1200px;margin:0 auto;padding:0 1.5rem}
+
+.section{padding:5rem 0 3rem}
+.section-header{margin-bottom:3rem}
+.section-num{
+  font-family:var(--font-display);font-size:.8rem;color:var(--accent2);
+  letter-spacing:.1em;text-transform:uppercase;margin-bottom:.5rem;
+}
+.section-title{
+  font-family:var(--font-display);font-size:clamp(1.6rem,3vw,2.2rem);
+  font-weight:700;line-height:1.2;letter-spacing:-.01em;
+}
+.section-desc{font-size:.92rem;color:var(--text2);margin-top:.6rem;max-width:32rem}
+
+.gallery{display:grid;gap:1.5rem}
+.gallery.cols-2{grid-template-columns:repeat(auto-fit,minmax(min(100%,480px),1fr))}
+.gallery.cols-1{grid-template-columns:1fr}
+
+.card{
+  background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
+  overflow:hidden;box-shadow:var(--shadow);transition:transform .3s,box-shadow .3s;
+}
+.card:hover{transform:translateY(-3px);box-shadow:0 8px 32px rgba(42,37,32,.1)}
+.card img{width:100%;height:auto;display:block;cursor:zoom-in}
+.card-info{
+  padding:.8rem 1rem;display:flex;align-items:center;justify-content:space-between;
+  border-top:1px solid var(--border);
+}
+.card-name{font-size:.85rem;font-weight:500;color:var(--text)}
+.card-tag{
+  font-size:.65rem;padding:.2rem .5rem;background:var(--bg2);color:var(--text2);
+  border-radius:2px;letter-spacing:.04em;
+}
+
+.lightbox{
+  position:fixed;inset:0;z-index:1000;background:rgba(20,18,15,.92);
+  backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;
+  padding:2rem;cursor:zoom-out;animation:fadeIn .25s ease;
+}
+.lightbox.active{display:flex}
+.lightbox img{max-width:95vw;max-height:92vh;object-fit:contain;border-radius:4px;box-shadow:0 4px 60px rgba(0,0,0,.5)}
+.lightbox-close{
+  position:absolute;top:1.2rem;right:1.5rem;width:36px;height:36px;
+  background:rgba(255,255,255,.12);border:none;border-radius:50%;color:#fff;
+  font-size:1.2rem;cursor:pointer;display:flex;align-items:center;justify-content:center;
+  transition:background .2s;
+}
+.lightbox-close:hover{background:rgba(255,255,255,.25)}
+.lightbox-caption{
+  position:absolute;bottom:1.5rem;left:50%;transform:translateX(-50%);
+  color:rgba(255,255,255,.7);font-size:.8rem;letter-spacing:.06em;
+}
+
+footer{
+  text-align:center;padding:4rem 2rem;border-top:1px solid var(--border);
+  color:var(--text2);font-size:.8rem;margin-top:3rem;
+}
+footer a{color:var(--accent);text-decoration:none}
+footer a:hover{text-decoration:underline}
+footer p+p{margin-top:.4rem}
+
+@keyframes fadeDown{from{opacity:0;transform:translateY(-12px)}to{opacity:1;transform:none}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+
+.fade-in{opacity:0;transform:translateY(16px);transition:opacity .6s ease,transform .6s ease}
+.fade-in.visible{opacity:1;transform:none}
+
+@media(max-width:640px){
+  .hero-stats{flex-wrap:wrap;gap:1.5rem}
+  nav a{padding:.7rem .8rem;font-size:.72rem}
+  .section{padding:3rem 0 2rem}
+  .gallery.cols-2{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<section class="hero">
+  <div class="hero-badge">AI-Generated Architectural Drawings</div>
+  <h1>现代简约<em>别墅</em><br>全套建筑图纸</h1>
+  <p class="hero-sub">
+    两层轻奢别墅 · 3主卧+2次卧 · 占地 14m × 11m<br>
+    由 Python + ezdxf + matplotlib 代码生成的完整建筑设计方案
+  </p>
+  <div class="hero-stats">
+    <div class="stat"><div class="stat-val">308</div><div class="stat-label">建筑面积 ㎡</div></div>
+    <div class="stat"><div class="stat-val">17</div><div class="stat-label">图纸总数</div></div>
+    <div class="stat"><div class="stat-val">4</div><div class="stat-label">专业类别</div></div>
+    <div class="stat"><div class="stat-val">2</div><div class="stat-label">建筑层数</div></div>
+  </div>
+</section>
+
+<nav>
+  <div class="nav-inner">
+    <a href="#renderings">效果图</a>
+    <a href="#floor-plans">平面图</a>
+    <a href="#elevations">立面图</a>
+    <a href="#section">剖面图</a>
+    <a href="#roof">屋顶平面图</a>
+    <a href="#plumbing">给排水</a>
+    <a href="#electrical">电气</a>
+  </div>
+</nav>
+
+<main>
+
+<section id="renderings" class="section fade-in">
+  <div class="section-header">
+    <div class="section-num">04 — 效果图</div>
+    <h2 class="section-title">建筑效果图</h2>
+    <p class="section-desc">3D透视渲染 · 室内俯视 · 南立面渲染 — 展示建筑的整体外观与空间感受</p>
+  </div>
+  <div class="gallery cols-2">
+    <div class="card">
+      <img src="images/南立面透视效果图.png" alt="南立面透视效果图" loading="lazy">
+      <div class="card-info"><span class="card-name">南立面透视效果图</span><span class="card-tag">3D 渲染</span></div>
+    </div>
+    <div class="card">
+      <img src="images/东南角透视效果图.png" alt="东南角透视效果图" loading="lazy">
+      <div class="card-info"><span class="card-name">东南角透视效果图</span><span class="card-tag">3D 渲染</span></div>
+    </div>
+    <div class="card">
+      <img src="images/南立面渲染效果图.png" alt="南立面渲染效果图" loading="lazy">
+      <div class="card-info"><span class="card-name">南立面渲染效果图</span><span class="card-tag">matplotlib</span></div>
+    </div>
+    <div class="card">
+      <img src="images/一层室内俯视效果图.png" alt="一层室内俯视效果图" loading="lazy">
+      <div class="card-info"><span class="card-name">一层室内俯视效果图</span><span class="card-tag">室内渲染</span></div>
+    </div>
+    <div class="card">
+      <img src="images/二层室内俯视效果图.png" alt="二层室内俯视效果图" loading="lazy">
+      <div class="card-info"><span class="card-name">二层室内俯视效果图</span><span class="card-tag">室内渲染</span></div>
+    </div>
+  </div>
+</section>
+
+<section id="floor-plans" class="section fade-in">
+  <div class="section-header">
+    <div class="section-num">01 — 建筑设计 · 平面图</div>
+    <h2 class="section-title">平面图</h2>
+    <p class="section-desc">包含墙体、门窗、家具布局、尺寸标注的完整平面设计</p>
+  </div>
+  <div class="gallery cols-2">
+    <div class="card">
+      <img src="images/一层平面图.png" alt="一层平面图" loading="lazy">
+      <div class="card-info"><span class="card-name">一层平面图 Ground Floor Plan</span><span class="card-tag">DXF+PNG</span></div>
+    </div>
+    <div class="card">
+      <img src="images/二层平面图.png" alt="二层平面图" loading="lazy">
+      <div class="card-info"><span class="card-name">二层平面图 Second Floor Plan</span><span class="card-tag">DXF+PNG</span></div>
+    </div>
+  </div>
+</section>
+
+<section id="elevations" class="section fade-in">
+  <div class="section-header">
+    <div class="section-num">01 — 建筑设计 · 立面图</div>
+    <h2 class="section-title">立面图</h2>
+    <p class="section-desc">四向立面 — 展示建筑外立面的门窗布局、层高与标高</p>
+  </div>
+  <div class="gallery cols-2">
+    <div class="card">
+      <img src="images/南立面图.png" alt="南立面图" loading="lazy">
+      <div class="card-info"><span class="card-name">南立面图 South Elevation</span><span class="card-tag">DXF+PNG</span></div>
+    </div>
+    <div class="card">
+      <img src="images/北立面图.png" alt="北立面图" loading="lazy">
+      <div class="card-info"><span class="card-name">北立面图 North Elevation</span><span class="card-tag">DXF+PNG</span></div>
+    </div>
+    <div class="card">
+      <img src="images/东立面图.png" alt="东立面图" loading="lazy">
+      <div class="card-info"><span class="card-name">东立面图 East Elevation</span><span class="card-tag">DXF+PNG</span></div>
+    </div>
+    <div class="card">
+      <img src="images/西立面图.png" alt="西立面图" loading="lazy">
+      <div class="card-info"><span class="card-name">西立面图 West Elevation</span><span class="card-tag">DXF+PNG</span></div>
+    </div>
+  </div>
+</section>
+
+<section id="section" class="section fade-in">
+  <div class="section-header">
+    <div class="section-num">01 — 建筑设计 · 剖面图</div>
+    <h2 class="section-title">剖面图</h2>
+    <p class="section-desc">建筑内部纵向剖切 — 展示楼板、楼梯、层高关系</p>
+  </div>
+  <div class="gallery cols-1">
+    <div class="card">
+      <img src="images/1-1剖面图.png" alt="1-1剖面图" loading="lazy">
+      <div class="card-info"><span class="card-name">1-1 剖面图 Section 1-1</span><span class="card-tag">DXF+PNG</span></div>
+    </div>
+  </div>
+</section>
+
+<section id="roof" class="section fade-in">
+  <div class="section-header">
+    <div class="section-num">01 — 建筑设计 · 屋顶</div>
+    <h2 class="section-title">屋顶平面图</h2>
+    <p class="section-desc">屋面找坡、落水管位置、检修口 — 屋顶排水设计</p>
+  </div>
+  <div class="gallery cols-1">
+    <div class="card">
+      <img src="images/屋顶平面图.png" alt="屋顶平面图" loading="lazy">
+      <div class="card-info"><span class="card-name">屋顶平面图 Roof Plan</span><span class="card-tag">DXF+PNG</span></div>
+    </div>
+  </div>
+</section>
+
+<section id="plumbing" class="section fade-in">
+  <div class="section-header">
+    <div class="section-num">02 — 给排水设计</div>
+    <h2 class="section-title">给排水平面图</h2>
+    <p class="section-desc">给水管 · 排水管 · 热水管 — 厨卫管线布局</p>
+  </div>
+  <div class="gallery cols-2">
+    <div class="card">
+      <img src="images/一层给排水平面图.png" alt="一层给排水平面图" loading="lazy">
+      <div class="card-info"><span class="card-name">一层给排水平面图</span><span class="card-tag">DXF+PNG</span></div>
+    </div>
+    <div class="card">
+      <img src="images/二层给排水平面图.png" alt="二层给排水平面图" loading="lazy">
+      <div class="card-info"><span class="card-name">二层给排水平面图</span><span class="card-tag">DXF+PNG</span></div>
+    </div>
+  </div>
+</section>
+
+<section id="electrical" class="section fade-in">
+  <div class="section-header">
+    <div class="section-num">03 — 电气设计</div>
+    <h2 class="section-title">电气平面图</h2>
+    <p class="section-desc">灯具 · 插座 · 开关 — 全屋电气点位布置</p>
+  </div>
+  <div class="gallery cols-2">
+    <div class="card">
+      <img src="images/一层电气平面图.png" alt="一层电气平面图" loading="lazy">
+      <div class="card-info"><span class="card-name">一层电气平面图</span><span class="card-tag">DXF+PNG</span></div>
+    </div>
+    <div class="card">
+      <img src="images/二层电气平面图.png" alt="二层电气平面图" loading="lazy">
+      <div class="card-info"><span class="card-name">二层电气平面图</span><span class="card-tag">DXF+PNG</span></div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <p>现代简约别墅 · 全套建筑图纸 — Generated by <a href="https://github.com" target="_blank">Python + ezdxf + matplotlib</a></p>
+  <p>14m × 11m · 308㎡ · 3主卧+2次卧 · 二层</p>
+</footer>
+
+<div class="lightbox" id="lightbox">
+  <button class="lightbox-close" aria-label="关闭">&times;</button>
+  <img src="" alt="">
+  <div class="lightbox-caption"></div>
+</div>
+
+<script>
+const lb = document.getElementById('lightbox');
+const lbImg = lb.querySelector('img');
+const lbCap = lb.querySelector('.lightbox-caption');
+
+document.querySelectorAll('.card img').forEach(img => {
+  img.addEventListener('click', () => {
+    lbImg.src = img.src;
+    lbCap.textContent = img.alt;
+    lb.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  });
+});
+
+lb.addEventListener('click', e => {
+  if (e.target === lbImg) return;
+  lb.classList.remove('active');
+  document.body.style.overflow = '';
+});
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape' && lb.classList.contains('active')) {
+    lb.classList.remove('active');
+    document.body.style.overflow = '';
+  }
+});
+
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); }});
+}, { threshold: 0.08 });
+document.querySelectorAll('.fade-in').forEach(el => obs.observe(el));
+
+const navLinks = document.querySelectorAll('nav a');
+const sections = document.querySelectorAll('main .section');
+const navObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      navLinks.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + e.target.id));
+    }
+  });
+}, { rootMargin: '-40% 0px -55% 0px' });
+sections.forEach(s => navObs.observe(s));
+</script>
+</body>
+</html>
