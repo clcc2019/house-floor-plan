@@ -12,7 +12,8 @@ import numpy as np
 from PIL import Image, ImageDraw, ImageFilter, ImageFont
 import math, os, random
 
-OUT = "/Users/duansong/Documents/workdir/myhome/图纸/04-效果图"
+OUT = os.path.join(os.getcwd(), "图纸", "04-效果图")
+os.makedirs(OUT, exist_ok=True)
 W, H = 2400, 1600
 
 

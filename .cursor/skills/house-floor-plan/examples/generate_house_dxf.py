@@ -19,7 +19,7 @@ import numpy as np
 plt.rcParams["font.sans-serif"] = ["PingFang HK", "Hiragino Sans GB", "Heiti TC", "STHeiti", "Arial Unicode MS"]
 plt.rcParams["axes.unicode_minus"] = False
 
-OUT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+OUT = os.getcwd()
 
 # ACI colors for DXF
 BLACK = 250

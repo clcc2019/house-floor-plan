@@ -19,7 +19,7 @@ import numpy as np
 plt.rcParams["font.sans-serif"] = ["PingFang HK", "Hiragino Sans GB", "Heiti TC", "STHeiti", "Arial Unicode MS"]
 plt.rcParams["axes.unicode_minus"] = False
 
-BASE = "/Users/duansong/Documents/workdir/myhome/图纸"
+BASE = os.path.join(os.getcwd(), "图纸")
 DIRS = {
     "平面图": f"{BASE}/01-建筑设计/平面图",
     "立面图": f"{BASE}/01-建筑设计/立面图",
