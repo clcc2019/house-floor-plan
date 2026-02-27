@@ -26,9 +26,9 @@ Generate floor plans using `ezdxf` for DXF output and `matplotlib` for PNG previ
 | `examples/generate_house_dxf.py` | Standalone floor plan example (DXF + PNG) |
 
 ```bash
-python scripts/generate_all.py     # outputs to ./图纸/
-python scripts/generate_render_3d.py
-python examples/generate_house_dxf.py
+python scripts/generate_all.py       # DXF → ./图纸/  PNG → ./docs/images/
+python scripts/generate_render_3d.py  # PNG → ./docs/images/
+python examples/generate_house_dxf.py # DXF+PNG → ./
 ```
 
 ## Design Principles
