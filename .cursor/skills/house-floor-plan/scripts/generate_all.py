@@ -1191,81 +1191,187 @@ def gen_electrical():
 # ══════════════════════════════════════════════
 
 def gen_render_south():
-    """参考 view.jpg 风格：大面积落地窗(左) + 深色石材大门(右) + 二层阳台玻璃栏杆"""
-    fig, ax = plt.subplots(1,1,figsize=(20,12),dpi=200,facecolor="#E8F0F8")
-    ax.set_facecolor("#E8F0F8"); ax.set_aspect("equal"); ax.axis("off")
-    for i in range(100):
-        y0=TOP+0.5+i*4.0/100; y1=y0+0.04
-        r=0.55+0.35*(i/100); g=0.72+0.25*(i/100); b=0.92+0.08*(i/100)
-        ax.fill_between([-3,W_m+3],[y0]*2,[y1]*2,color=(r,g,b),zorder=0)
-    ax.fill_between([-3,W_m+3],[-1.5,-1.5],[0,0],color="#8B9D6B",zorder=1)
-    ax.fill_between([-3,W_m+3],[-0.15,-0.15],[0,0],color="#A0B07A",zorder=1)
+    """南立面建筑表现图风格：天空云彩、地面投影、墙面质感、窗户反射、阳台细部、景观层次"""
+    fig, ax = plt.subplots(1, 1, figsize=(20, 12), dpi=200, facecolor="#E8F0F8")
+    ax.set_facecolor("#E8F0F8")
+    ax.set_aspect("equal")
+    ax.axis("off")
 
-    # 一层墙体 — 左侧浅色，右侧深色石材（参考view.jpg）
-    ax.add_patch(patches.Rectangle((0,GL),8.0,F1_CL-GL,facecolor="#F5F0E8",edgecolor="none",zorder=3))
-    ax.add_patch(patches.Rectangle((8.0,GL),W_m-8.0,F1_CL-GL,facecolor="#4A4038",edgecolor="none",zorder=3))
-    # 二层墙体
-    ax.add_patch(patches.Rectangle((0,F2_FL),W_m,F2_CL-F2_FL,facecolor="#F0EBE0",edgecolor="none",zorder=3))
+    # ── 1. 天空：多层渐变 + 写意白云 ──
+    for i in range(120):
+        y0 = TOP + 0.5 + i * 4.5 / 120
+        y1 = y0 + 0.04
+        t = i / 120
+        # 非线性渐变：顶部更蓝，中间过渡更自然
+        r = 0.48 + 0.42 * (1 - 0.3 * (1 - t) ** 2)
+        g = 0.68 + 0.28 * (1 - 0.2 * t ** 1.5)
+        b = 0.88 + 0.12 * (0.5 + 0.5 * math.sin(t * math.pi))
+        ax.fill_between([-3, W_m + 3], [y0] * 2, [y1] * 2, color=(r, g, b), zorder=0)
+    # 白云：半透明椭圆叠加
+    cloud_specs = [(-0.5, TOP + 1.2, 1.8, 0.5, 0.4), (2.5, TOP + 1.5, 2.2, 0.55, 0.45),
+                  (7.0, TOP + 1.0, 1.5, 0.4, 0.35), (11.0, TOP + 1.8, 2.0, 0.5, 0.4), (W_m + 1.5, TOP + 1.3, 1.6, 0.45, 0.38)]
+    for cx, cy, rx, ry, a in cloud_specs:
+        ax.add_patch(patches.Ellipse((cx, cy), rx, ry, facecolor="white", edgecolor="none", alpha=0.75, zorder=0))
+        ax.add_patch(patches.Ellipse((cx + rx * 0.3, cy - ry * 0.1), rx * 0.7, ry * 0.8, facecolor="white", edgecolor="none", alpha=0.65, zorder=0))
+
+    # ── 2. 地面：草坪条纹、人行步道、建筑投影 ──
+    ax.fill_between([-3, W_m + 3], [-1.5, -1.5], [0, 0], color="#7A8D5A", zorder=1)
+    # 草坪条纹纹理（交替深浅）
+    for stripe in range(60):
+        xs = -3 + stripe * (W_m + 6) / 30
+        xe = xs + (W_m + 6) / 60
+        shade = "#8B9D6B" if stripe % 2 == 0 else "#7A8D5A"
+        ax.fill_between([xs, xe], [-0.2, -0.2], [0, 0], color=shade, zorder=1)
+    # 人行步道（大门延伸到底部）
+    pw_left, pw_right = 9.8, 10.2
+    ax.add_patch(patches.Rectangle((pw_left, -1.5), pw_right - pw_left, 1.5, facecolor="#B0A89A", edgecolor="#989078", linewidth=0.4, zorder=1))
+    # 建筑在地面的投影（暗色梯度）
+    shadow_left, shadow_right = -0.2, W_m + 0.2
+    for s in range(25):
+        t = s / 25
+        xx = [shadow_left + t * (shadow_right - shadow_left), shadow_left + (t + 0.04) * (shadow_right - shadow_left)]
+        alpha = 0.4 * (1 - t * 0.3) * (1 - abs(t - 0.5) * 0.5)
+        ax.fill_between(xx, [-0.5, -0.5], [0, 0], color="#2A3A20", alpha=alpha, zorder=1)
+
+    # ── 3. 墙面：白色纵向渐变 + 石材纹理 ──
+    # 一层左侧白色墙（纵向渐变：上浅下深）
+    for row in range(40):
+        yb = GL + row * (F1_CL - GL) / 40
+        yt = yb + (F1_CL - GL) / 40
+        t = row / 40
+        shade = 0.96 - 0.06 * t
+        ax.add_patch(patches.Rectangle((0, yb), 8.0, (F1_CL - GL) / 40, facecolor=(shade, shade * 0.98, shade * 0.92), edgecolor="none", zorder=3))
+    # 一层右侧深色石材（DARK_STONE_X=8.2 到 W_m）
+    stone_w = W_m - DARK_STONE_X
+    ax.add_patch(patches.Rectangle((DARK_STONE_X, GL), stone_w, F1_CL - GL, facecolor="#4A4038", edgecolor="none", zorder=3))
+    for line in range(12):
+        ly = GL + (F1_CL - GL) * (0.1 + 0.8 * line / 12)
+        ax.plot([DARK_STONE_X, W_m], [ly, ly], color="#3A3028", linewidth=0.15, alpha=0.6, zorder=3)
+    # 二层墙体（纵向渐变）
+    for row in range(35):
+        yb = F2_FL + row * (F2_CL - F2_FL) / 35
+        t = row / 35
+        shade = 0.94 - 0.05 * t
+        ax.add_patch(patches.Rectangle((0, yb), W_m, (F2_CL - F2_FL) / 35, facecolor=(shade, shade * 0.96, shade * 0.88), edgecolor="none", zorder=3))
     # 女儿墙
-    ax.add_patch(patches.Rectangle((0,ROOF),W_m,PARAPET,facecolor="#E8E2D5",edgecolor="none",zorder=3))
-    # 顶部压顶
-    ax.add_patch(patches.Rectangle((-0.05,TOP-0.08),W_m+0.1,0.08,facecolor="#D0C8B8",edgecolor="#B0A898",linewidth=0.5,zorder=4))
+    ax.add_patch(patches.Rectangle((0, ROOF), W_m, PARAPET, facecolor="#E8E2D5", edgecolor="none", zorder=3))
+    # 墙面-屋顶交接细微阴影线
+    ax.plot([0, W_m], [ROOF, ROOF], color="#B0A898", linewidth=0.4, alpha=0.5, zorder=4)
+    # 屋顶压顶线（更明显）
+    ax.add_patch(patches.Rectangle((-0.06, TOP - 0.12), W_m + 0.12, 0.12, facecolor="#C8BEA8", edgecolor="#988E78", linewidth=0.8, zorder=4))
+    ax.add_patch(patches.Rectangle((-0.03, TOP - 0.06), W_m + 0.06, 0.06, facecolor="#D8D0C0", edgecolor="#B0A898", linewidth=0.5, zorder=4))
     # 楼层分隔线
-    ax.add_patch(patches.Rectangle((-0.03,F1_CL-0.05),W_m+0.06,0.2,facecolor="#D8D0C0",edgecolor="#C0B8A8",linewidth=0.5,zorder=4))
+    ax.add_patch(patches.Rectangle((-0.03, F1_CL - 0.05), W_m + 0.06, 0.2, facecolor="#D8D0C0", edgecolor="#C0B8A8", linewidth=0.5, zorder=4))
     # 外轮廓
-    ax.plot([0,0,W_m,W_m],[GL,TOP,TOP,GL],color="#8A7E6E",linewidth=1.5,zorder=5)
-    ax.plot([0,W_m],[GL,GL],color="#8A7E6E",linewidth=1.5,zorder=5)
+    ax.plot([0, 0, W_m, W_m], [GL, TOP, TOP, GL], color="#8A7E6E", linewidth=1.5, zorder=5)
+    ax.plot([0, W_m], [GL, GL], color="#8A7E6E", linewidth=1.5, zorder=5)
 
-    def rwin(x,y,w,h,divs=2):
-        ax.add_patch(patches.Rectangle((x-0.04,y-0.04),w+0.08,h+0.08,facecolor="#6A6A6A",edgecolor="#555",linewidth=0.8,zorder=6))
+    # ── 4. 窗户：自然反射 + 双线窗框 + 窗台阴影 ──
+    def rwin(x, y, w, h, divs=2):
+        # 窗套/线脚（外框）
+        ax.add_patch(patches.Rectangle((x - 0.05, y - 0.05), w + 0.10, h + 0.10, facecolor="#7A7A7A", edgecolor="#5A5A5A", linewidth=0.9, zorder=6))
+        ax.add_patch(patches.Rectangle((x - 0.03, y - 0.03), w + 0.06, h + 0.06, facecolor="#8A8A8A", edgecolor="#6A6A6A", linewidth=0.5, zorder=6))
         for j in range(divs):
-            gx=x+j*w/divs
-            for k in range(20):
-                gy=y+k*h/20; t=k/20
-                ax.add_patch(patches.Rectangle((gx+0.02,gy),w/divs-0.04,h/20,facecolor=(0.6+0.2*t,0.75+0.15*t,0.88+0.08*t),edgecolor="none",zorder=7))
-            ax.add_patch(patches.Rectangle((gx,y),w/divs,h,facecolor="none",edgecolor="#555",linewidth=0.5,zorder=8))
-        ax.plot([x,x+w],[y+h*0.45,y+h*0.45],color="#555",linewidth=0.4,zorder=8)
-        ax.add_patch(patches.Rectangle((x-0.06,y-0.06),w+0.12,0.06,facecolor="#C8C0B0",edgecolor="#A8A098",linewidth=0.5,zorder=6))
+            gx = x + j * w / divs
+            for k in range(25):
+                gy = y + k * h / 25
+                t = k / 25
+                # 玻璃反射：顶部深蓝→底部浅蓝→底部微弱天空/绿色反射
+                if t < 0.5:
+                    r, g, b = 0.35 + 0.25 * t, 0.55 + 0.25 * t, 0.75 + 0.15 * t
+                else:
+                    r = 0.48 + 0.12 * (t - 0.5) + 0.05  # 底部微弱绿色反射
+                    g = 0.82 + 0.08 * (t - 0.5)
+                    b = 0.90 + 0.05 * (1 - t)
+                ax.add_patch(patches.Rectangle((gx + 0.02, gy), w / divs - 0.04, h / 25, facecolor=(r, g, b), edgecolor="none", zorder=7))
+            ax.plot([gx, gx + w / divs], [y, y], color="#5A5A5A", linewidth=0.4, zorder=8)
+            ax.plot([gx, gx + w / divs], [y + h, y + h], color="#5A5A5A", linewidth=0.4, zorder=8)
+            ax.plot([gx, gx], [y, y + h], color="#5A5A5A", linewidth=0.4, zorder=8)
+            ax.plot([gx + w / divs, gx + w / divs], [y, y + h], color="#5A5A5A", linewidth=0.4, zorder=8)
+        ax.plot([x, x + w], [y + h * 0.5, y + h * 0.5], color="#555", linewidth=0.35, zorder=8)
+        # 窗台 + 下方阴影条
+        ax.add_patch(patches.Rectangle((x - 0.06, y - 0.08), w + 0.12, 0.08, facecolor="#C0B8A8", edgecolor="#A09888", linewidth=0.5, zorder=6))
+        ax.add_patch(patches.Rectangle((x - 0.04, y - 0.12), w + 0.08, 0.04, facecolor="#3A3A38", alpha=0.35, edgecolor="none", zorder=6))
 
     for (x, y, w, h, divs) in SOUTH_WIN:
         rwin(x, y, w, h, divs)
 
-    # 玄关石材大门（参考view.jpg右侧深色门）
-    dx,dy=9.5,F1_FL; dw,dh=1.2,2.6
-    ax.add_patch(patches.Rectangle((dx-0.06,dy),dw+0.12,dh+0.1,facecolor="#3A3028",edgecolor="#2A2018",linewidth=1.2,zorder=6))
-    ax.add_patch(patches.Rectangle((dx,dy),dw/2-0.02,dh,facecolor="#5A4A3A",edgecolor="#3A3028",linewidth=0.8,zorder=7))
-    ax.add_patch(patches.Rectangle((dx+dw/2+0.02,dy),dw/2-0.02,dh,facecolor="#5A4A3A",edgecolor="#3A3028",linewidth=0.8,zorder=7))
+    # ── 5. 玄关大门 + 门头灯 ──
+    dx, dy = 9.5, F1_FL
+    dw, dh = 1.2, 2.6
+    ax.add_patch(patches.Rectangle((dx - 0.06, dy), dw + 0.12, dh + 0.1, facecolor="#3A3028", edgecolor="#2A2018", linewidth=1.2, zorder=6))
+    ax.add_patch(patches.Rectangle((dx, dy), dw / 2 - 0.02, dh, facecolor="#5A4A3A", edgecolor="#3A3028", linewidth=0.8, zorder=7))
+    ax.add_patch(patches.Rectangle((dx + dw / 2 + 0.02, dy), dw / 2 - 0.02, dh, facecolor="#5A4A3A", edgecolor="#3A3028", linewidth=0.8, zorder=7))
     for i in range(3):
-        ax.add_patch(patches.Rectangle((dx-0.3-i*0.15,dy-(i+1)*0.15),dw+0.6+i*0.3,0.15,facecolor="#4A4038",edgecolor="#3A3028",linewidth=0.5,zorder=4))
+        ax.add_patch(patches.Rectangle((dx - 0.3 - i * 0.15, dy - (i + 1) * 0.15), dw + 0.6 + i * 0.3, 0.15, facecolor="#4A4038", edgecolor="#3A3028", linewidth=0.5, zorder=4))
+    # 门头灯（小黄色光点）
+    ax.add_patch(patches.Circle((dx + dw / 2, dy + dh + 0.25), 0.06, facecolor="#FFE066", edgecolor="#E0B840", linewidth=0.3, alpha=0.9, zorder=8))
+    ax.add_patch(patches.Circle((dx + dw / 2, dy + dh + 0.25), 0.12, facecolor="#FFE066", edgecolor="none", alpha=0.3, zorder=7))
 
-    # 二层阳台玻璃栏杆（参考view.jpg）
-    ax.add_patch(patches.Rectangle((0.15,F2_FL-0.12),W_m-0.3,0.12,facecolor="#D8D0C0",edgecolor="#B0A898",linewidth=0.5,zorder=4))
-    for i in range(9):
-        px=0.3+i*(W_m-0.6)/8
-        ax.add_patch(patches.Rectangle((px-0.025,F2_FL-1.1),0.05,1.1,facecolor="#808080",edgecolor="#606060",linewidth=0.3,zorder=5))
-    for i in range(8):
-        px1=0.3+i*(W_m-0.6)/8+0.04; px2=0.3+(i+1)*(W_m-0.6)/8-0.04
-        ax.add_patch(patches.Rectangle((px1,F2_FL-1.1+0.08),px2-px1,0.86,facecolor="#C0D8E8",edgecolor="#90A8B8",linewidth=0.3,alpha=0.5,zorder=5))
-    ax.add_patch(patches.Rectangle((0.25,F2_FL-0.06),W_m-0.5,0.06,facecolor="#707070",edgecolor="#505050",linewidth=0.5,zorder=6))
+    # ── 6. 阳台：底板阴影 + 细栏杆 + 精致绿植盆 ──
+    # 阳台底板（底面有阴影）
+    ax.add_patch(patches.Rectangle((0.15, F2_FL - 0.15), W_m - 0.3, 0.15, facecolor="#D0C8B8", edgecolor="#B0A898", linewidth=0.5, zorder=4))
+    ax.add_patch(patches.Rectangle((0.12, F2_FL - 1.25), W_m - 0.24, 0.08, facecolor="#2A2820", alpha=0.4, edgecolor="none", zorder=4))
+    # 栏杆立柱更细致
+    for i in range(13):
+        px = 0.2 + i * (W_m - 0.4) / 12
+        ax.add_patch(patches.Rectangle((px - 0.02, F2_FL - 1.1), 0.04, 1.08, facecolor="#787878", edgecolor="#585858", linewidth=0.25, zorder=5))
+        ax.add_patch(patches.Rectangle((px - 0.015, F2_FL - 0.02), 0.03, 0.02, facecolor="#888888", edgecolor="#686868", linewidth=0.2, zorder=5))
+    for i in range(12):
+        px1 = 0.2 + i * (W_m - 0.4) / 12 + 0.035
+        px2 = 0.2 + (i + 1) * (W_m - 0.4) / 12 - 0.035
+        ax.add_patch(patches.Rectangle((px1, F2_FL - 1.02), px2 - px1, 0.9, facecolor="#A8C8E0", edgecolor="#88A8C0", linewidth=0.25, alpha=0.55, zorder=5))
+    ax.add_patch(patches.Rectangle((0.22, F2_FL - 0.05), W_m - 0.44, 0.05, facecolor="#808080", edgecolor="#606060", linewidth=0.4, zorder=6))
+    # 阳台绿植盆（更精致）
+    def _ph(x, y):
+        return ((int(x * 1000) * 31 + int(y * 1000)) % 1000) / 1000.0
+    for fx, fy in [(1.2, F2_FL - 1.05), (4.5, F2_FL - 1.05), (7.5, F2_FL - 1.05), (10.5, F2_FL - 1.05), (13.0, F2_FL - 1.05)]:
+        ax.add_patch(patches.Rectangle((fx - 0.14, fy - 0.12), 0.28, 0.12, facecolor="#B89A78", edgecolor="#987858", linewidth=0.35, zorder=6))
+        ax.add_patch(patches.Rectangle((fx - 0.11, fy - 0.08), 0.22, 0.08, facecolor="#C8A878", edgecolor="#A88858", linewidth=0.2, zorder=6))
+        for j in range(4):
+            off = (_ph(fx * 100 + j, fy) - 0.5) * 0.15
+            ax.add_patch(patches.Ellipse((fx + off, fy + 0.02), 0.22, 0.18, facecolor="#4A8A3A", edgecolor="#3A6A2A", linewidth=0.25, zorder=6))
+        ax.add_patch(patches.Ellipse((fx, fy + 0.05), 0.28, 0.22, facecolor="#5A9A4A", edgecolor="#3A7A2A", linewidth=0.3, zorder=6))
 
-    # 景观
-    def tree(cx,cy,th=1.2,cr=0.8):
-        ax.add_patch(patches.Rectangle((cx-0.06,cy),0.12,th,facecolor="#8B6F47",edgecolor="#6B4F27",linewidth=0.5,zorder=2))
-        for dy_t,r,c in [(0,cr,"#4A7A3A"),(cr*0.3,cr*0.85,"#5A8A4A"),(cr*0.6,cr*0.6,"#6A9A5A")]:
-            ax.add_patch(patches.Ellipse((cx,cy+th+dy_t),r*2,r*1.5,facecolor=c,edgecolor="#3A6A2A",linewidth=0.3,alpha=0.85,zorder=2))
-    def bush(cx,cy,w=0.8,h=0.4):
-        for dx_b,r in [(-w*0.3,h*0.8),(0,h),(w*0.3,h*0.8)]:
-            ax.add_patch(patches.Ellipse((cx+dx_b,cy+h*0.3),r*1.2,r,facecolor="#5A8A4A",edgecolor="#3A6A2A",linewidth=0.3,alpha=0.8,zorder=2))
-    tree(-1.5,0,1.5,1.0); tree(W_m+1.5,0,1.8,1.2); tree(-0.5,-0.3,0.8,0.6)
-    bush(1.0,-0.1,0.6,0.3); bush(5.0,-0.1,0.5,0.25); bush(8.0,-0.1,0.7,0.3); bush(12.0,-0.1,0.6,0.3)
-    for fx in [1.0,3.5,6.0,8.5,11.0,13.0]:
-        ax.add_patch(patches.Rectangle((fx-0.12,F2_FL-1.1-0.15),0.24,0.15,facecolor="#C08060",edgecolor="#A06040",linewidth=0.3,zorder=6))
-        ax.add_patch(patches.Ellipse((fx,F2_FL-1.1+0.05),0.3,0.2,facecolor="#5A9A4A",edgecolor="#3A7A2A",linewidth=0.3,zorder=6))
+    # ── 7. 景观：多层次树、自然灌木、花坛点缀 ──
+    def _hash(x, y):
+        return ((int(x * 1000) * 31 + int(y * 1000)) % 1000) / 1000.0
 
-    ax.text(W_m/2,TOP+2.5,"南立面渲染效果图",ha="center",va="center",fontsize=20,fontweight="bold",color="#4A5A6A",zorder=10)
-    ax.text(W_m/2,TOP+2.0,"South Elevation Rendering  |  现代简约风格  |  14m × 11m  |  二层别墅",ha="center",va="center",fontsize=9,color="#8A8A8A",zorder=10)
-    ax.set_xlim(-3,W_m+3); ax.set_ylim(-1.8,TOP+3.5)
-    fig.savefig(f"{IMG_DIR}/南立面渲染效果图.png",bbox_inches="tight",pad_inches=0.2,dpi=200,facecolor="#E8F0F8")
+    def tree(cx, cy, th=1.2, cr=0.8):
+        ax.add_patch(patches.Rectangle((cx - 0.07, cy), 0.14, th, facecolor="#7A5F37", edgecolor="#5A3F17", linewidth=0.5, zorder=2))
+        layers = [(0, cr * 1.1, "#3A6A2A"), (cr * 0.25, cr * 0.95, "#4A7A3A"), (cr * 0.5, cr * 0.8, "#5A8A4A"),
+                  (cr * 0.35, cr * 0.65, "#4A7A38"), (cr * 0.7, cr * 0.55, "#6A9A5A"), (cr * 0.15, cr * 0.9, "#3D6E30")]
+        for i, (dy_t, r, c) in enumerate(layers):
+            rx = r * (1 + 0.08 * (_hash(cx + i, cy) - 0.5))
+            ry = r * 1.4 * (0.92 + 0.16 * _hash(cx + i * 2, cy))
+            ox = (_hash(cx + i * 3, cy) - 0.5) * 0.08
+            ax.add_patch(patches.Ellipse((cx + ox, cy + th + dy_t), rx * 2, ry, facecolor=c, edgecolor="#2A5A1A", linewidth=0.25, alpha=0.9, zorder=2))
+
+    def bush(cx, cy, w=0.8, h=0.4):
+        for i in range(5):
+            dx_b = (_hash(cx * 100 + i, cy) - 0.5) * w
+            dy_b = (_hash(cx, cy * 100 + i) - 0.3) * h
+            rw = 0.25 + _hash(cx + i * 0.1, cy) * 0.2
+            rh = 0.15 + _hash(cy, cx + i) * 0.15
+            ax.add_patch(patches.Ellipse((cx + dx_b, cy + dy_b + h * 0.3), rw, rh, facecolor="#5A8A4A", edgecolor="#3A6A2A", linewidth=0.25, alpha=0.85, zorder=2))
+
+    tree(-1.5, 0, 1.5, 1.0)
+    tree(W_m + 1.5, 0, 1.8, 1.2)
+    tree(-0.5, -0.3, 0.8, 0.6)
+    bush(1.2, -0.1, 0.7, 0.35)
+    bush(5.2, -0.1, 0.6, 0.3)
+    bush(8.2, -0.1, 0.8, 0.35)
+    bush(12.2, -0.1, 0.65, 0.32)
+    # 花坛/花丛（红/黄/粉）
+    for (fx, fy, colors) in [(2.5, 0.05, ["#E85A5A", "#F0A050"]), (6.5, 0.03, ["#F0C060", "#E87070"]), (10.0, 0.02, ["#E888A0", "#F0B050"])]:
+        for i in range(6):
+            ax.add_patch(patches.Ellipse((fx + 0.15 * (i % 3 - 1), fy + 0.08 * (i // 3)), 0.12, 0.1, facecolor=colors[i % len(colors)], edgecolor="none", alpha=0.85, zorder=2))
+
+    ax.text(W_m / 2, TOP + 2.5, "南立面渲染效果图", ha="center", va="center", fontsize=20, fontweight="bold", color="#4A5A6A", zorder=10)
+    ax.text(W_m / 2, TOP + 2.0, "South Elevation Rendering  |  现代简约风格  |  14m × 11m  |  二层别墅", ha="center", va="center", fontsize=9, color="#8A8A8A", zorder=10)
+    ax.set_xlim(-3, W_m + 3)
+    ax.set_ylim(-1.8, TOP + 3.5)
+    fig.savefig(f"{IMG_DIR}/南立面渲染效果图.png", bbox_inches="tight", pad_inches=0.2, dpi=200, facecolor="#E8F0F8")
     plt.close(fig)
     print("  ✓ 南立面渲染效果图 (PNG)")
 

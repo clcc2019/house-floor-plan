@@ -101,10 +101,26 @@ def make_wall_texture(w, h, base_color=(240, 235, 225), noise_level=5):
 def make_glass_texture(w, h, tint=(80, 130, 170)):
     arr = np.zeros((h, w, 3), dtype=np.uint8)
     for y in range(h):
-        t = y / h
+        t = y / h  # 0=top, 1=bottom
         for c in range(3):
             v = tint[c] + int(40 * (1-t)) + int(30 * math.sin(t * math.pi))
             arr[y, :, c] = min(255, max(0, v))
+        # 底部1/5：微弱绿色地面反射
+        if t > 0.8:
+            blend = (t - 0.8) / 0.2
+            green_reflect = (0, 25, 15)
+            arr[y, :, :] = np.clip(
+                arr[y, :, :].astype(float) + np.array(green_reflect) * blend * 0.6,
+                0, 255
+            ).astype(np.uint8)
+    # 中间更明亮的水平高光条
+    mid_y_start, mid_y_end = int(h * 0.35), int(h * 0.55)
+    mid_center = (mid_y_start + mid_y_end) / 2
+    for y in range(mid_y_start, mid_y_end):
+        dist = abs(y - mid_center) / (mid_y_end - mid_y_start) * 2
+        alpha = 0.35 * max(0, 1 - dist)
+        arr[y, :] = np.clip(arr[y, :].astype(float) + 255 * alpha, 0, 255).astype(np.uint8)
+    # 原有竖向高光
     hl_x = int(w * 0.15); hl_w = max(1, int(w * 0.08))
     for x in range(hl_x, min(hl_x + hl_w, w)):
         t = (x - hl_x) / hl_w
@@ -194,10 +210,18 @@ def _draw_tree(draw, cam, pos3d, trunk_h=2.5, crown_r=1.2, color=(55,110,45)):
     trunk_w = max(4, int(abs(bx-tx)*0.08+4))
     draw.rectangle([bx-trunk_w, ty, bx+trunk_w, by], fill=(100, 75, 55))
     scale = max(20, int(crown_r * 600 / base[2]))
-    for dy, r, cs in [(0, scale, 0), (-int(scale*0.3), int(scale*0.9), 12),
-                       (-int(scale*0.6), int(scale*0.65), 22)]:
-        c = tuple(min(255, color[i]+cs) for i in range(3))
-        draw.ellipse([tx-int(r*1.1), ty+dy-int(r*0.8), tx+int(r*1.1), ty+dy+int(r*0.8)], fill=c)
+    # 5层椭圆叠加，底层最深顶层最浅，每层有基于位置的伪随机偏移
+    seed = pos3d[0] * 7.3 + pos3d[1] * 11.1 + pos3d[2] * 13.7
+    for i, (dy_base, r_ratio, cs) in enumerate([
+        (0, 1.0, 0), (-int(scale*0.2), 0.88, 8), (-int(scale*0.4), 0.72, 16),
+        (-int(scale*0.6), 0.55, 24), (-int(scale*0.85), 0.4, 32)
+    ]):
+        off_x = int(scale * 0.08 * math.sin(seed + i * 2.1))
+        off_y = int(scale * 0.06 * math.sin(seed * 1.3 + i * 1.7))
+        r = int(scale * r_ratio)
+        c = tuple(min(255, color[j] + cs) for j in range(3))
+        ex, ey = tx + off_x, ty + dy_base + off_y
+        draw.ellipse([ex - int(r*1.1), ey - int(r*0.8), ex + int(r*1.1), ey + int(r*0.8)], fill=c)
 
 
 def _draw_bush(draw, cam, pos3d, size=0.5, color=(65,125,55)):
@@ -206,9 +230,15 @@ def _draw_bush(draw, cam, pos3d, size=0.5, color=(65,125,55)):
         return
     bpx, bpy = int(bp[0]), int(bp[1])
     s = max(10, int(size * 500 / bp[2]))
-    for dx, rx, ry, cs in [(-s//2, s//2, s//3, -5), (0, int(s*0.6), int(s*0.4), 0),
-                            (s//2, s//2, s//3, -5)]:
-        c = tuple(min(255, max(0, color[i]+cs)) for i in range(3))
+    # 5个椭圆叠加，颜色变化更大
+    seed = pos3d[0] * 5.2 + pos3d[2] * 8.1
+    for i, (dx_frac, rx_ratio, ry_ratio, cs) in enumerate([
+        (-0.5, 1.0, 0.35, -12), (-0.25, 0.75, 0.4, 0), (0, 0.6, 0.35, 10),
+        (0.25, 0.55, 0.3, 18), (0.4, 0.45, 0.25, 25)
+    ]):
+        dx = int(s * dx_frac) + int(s * 0.05 * math.sin(seed + i))
+        rx, ry = int(s * rx_ratio), int(s * ry_ratio)
+        c = tuple(min(255, max(0, color[j] + cs)) for j in range(3))
         draw.ellipse([bpx+dx-rx, bpy-ry, bpx+dx+rx, bpy+ry//2], fill=c)
 
 
@@ -264,7 +294,25 @@ def generate_south_perspective():
     # 建筑底部位置
     base_pt = cam.project((BW/2, 0, 0))
     gy = int(base_pt[1]) if base_pt else int(H*0.7)
-    draw.rectangle([0, gy, W, H], fill=(110, 145, 95))
+    base_color = (110, 145, 95)
+    draw.rectangle([0, gy, W, H], fill=base_color)
+    # 草地条纹纹理：每隔15像素画一条水平线，交替稍浅/稍深
+    for y in range(gy, H, 15):
+        delta = 10 if ((y - gy) // 15) % 2 == 0 else -10
+        stripe_color = tuple(min(255, max(0, base_color[i] + delta)) for i in range(3))
+        draw.line([(0, y), (W, y)], fill=stripe_color)
+    # 建筑正下方前景阴影：半透明深色梯度
+    pt_left = cam.project((0, 0, 0))
+    pt_right = cam.project((BW, 0, 0))
+    if pt_left and pt_right:
+        bx0 = max(0, int(min(pt_left[0], pt_right[0])) - 40)
+        bx1 = min(W, int(max(pt_left[0], pt_right[0])) + 40)
+        shadow_layer = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+        sd = ImageDraw.Draw(shadow_layer)
+        sd.polygon([(bx0, gy), (bx1, gy), (bx1, H), (bx0, H)], fill=(0, 0, 0, 35))
+        shadow_layer = shadow_layer.filter(ImageFilter.GaussianBlur(25))
+        img = Image.alpha_composite(img.convert("RGBA"), shadow_layer).convert("RGB")
+        draw = ImageDraw.Draw(img)
 
     # 院子
     yard = project_quad(cam, south_face(-2, -0.01, BW+2, 0))
@@ -413,7 +461,13 @@ def generate_southeast_perspective():
     # 地面
     base_pt = cam.project((BW/2, 0, BD/2))
     gy = int(base_pt[1]) if base_pt else int(H*0.65)
-    draw.rectangle([0, gy-30, W, H], fill=(110, 145, 95))
+    base_color = (110, 145, 95)
+    draw.rectangle([0, gy-30, W, H], fill=base_color)
+    # 草地条纹纹理：每隔15像素画一条水平线
+    for y in range(gy-30, H, 15):
+        delta = 10 if ((y - (gy-30)) // 15) % 2 == 0 else -10
+        stripe_color = tuple(min(255, max(0, base_color[i] + delta)) for i in range(3))
+        draw.line([(0, y), (W, y)], fill=stripe_color)
 
     # 院子
     yard = project_quad(cam, [(-1, 0.01, -2), (BW+1, 0.01, -2), (BW+1, 0.01, 0), (-1, 0.01, 0)])

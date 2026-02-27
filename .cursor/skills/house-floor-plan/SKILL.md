@@ -102,7 +102,38 @@ Cross-drawing consistency:
 - **Exterior wall**: 240mm (`lineweight=50`), **Interior**: 120mm (`lineweight=35`)
 - **Room label**: Chinese name (bold) + English name (gray) + dimensions (gray), centered
 - **Dimensions**: exterior segmented (-700mm offset) + total (-1400mm offset)
-- **Export**: DXF (AutoCAD R2010, mm units) + PNG (150dpi)
+- **Export**: DXF (AutoCAD R2010, mm units) + PNG (150dpi, 效果图200dpi)
+- **CJK Font**: 自动检测系统中文字体 (Noto Sans CJK / PingFang / Microsoft YaHei)
+
+## Drawing Quality Standards
+
+### MEP (Mechanical, Electrical, Plumbing) Drawings
+Electrical plans must include:
+- Distribution box (DB) with BV cable specifications (BV10/BV2.5/BV4)
+- Circuit control lines (switch → light dashed connections)
+- Standard symbols: ⊕ ceiling light, ● downlight, ▶ 10A outlet, □ 16A outlet
+- Room name labels matching floor plan positions
+
+Plumbing plans must include:
+- Pipe diameter annotations on lines (DN20/DN50/DN110)
+- Riser IDs (JL-1/WL-1) at vertical pipe locations
+- Valve symbols (butterfly ▷◁) at branch points
+- Water meter symbol (◇W) at building entry
+
+### Rendering Quality
+Elevation renderings include:
+- Multi-layer sky gradient with clouds
+- Lawn stripe texture, walkway, ground shadow
+- Wall surface gradient (top-light to bottom-dark)
+- Glass reflection (sky blue → green ground reflection)
+- Stone cladding texture with horizontal joint lines
+- Multi-layer tree canopies and landscaping details
+
+3D perspective renderings include:
+- Glass horizontal highlight band
+- Multi-layer tree crowns (5-layer overlay)
+- Grass stripe texture
+- Building shadow projection on ground
 
 ## Additional Resources
 
