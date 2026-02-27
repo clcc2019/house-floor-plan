@@ -811,35 +811,6 @@ def _plumbing_png(title, floor_name, walls, pipes_s, pipes_d, pipes_h, fixtures,
     for (x,y,w,h) in walls:
         ax.add_patch(patches.Rectangle((s(x),s(y)),s(w),s(h),facecolor="#E0E0E0",edgecolor=C_LINE,linewidth=0.2,zorder=2))
 
-    # 管线交叉检测：两线段是否相交，返回交点
-    def seg_intersect(a1,a2, b1,b2):
-        ax1,ay1=s(a1[0]),s(a1[1]); ax2,ay2=s(a2[0]),s(a2[1])
-        bx1,by1=s(b1[0]),s(b1[1]); bx2,by2=s(b2[0]),s(b2[1])
-        d=(ax2-ax1)*(by2-by1)-(ay2-ay1)*(bx2-bx1)
-        if abs(d)<1e-9: return None
-        t=((bx1-ax1)*(by2-by1)-(by1-ay1)*(bx2-bx1))/d
-        u=((ax2-ax1)*(by1-ay1)-(ay2-ay1)*(bx1-ax1))/d
-        if 0<=t<=1 and 0<=u<=1:
-            return (ax1+t*(ax2-ax1), ay1+t*(ay2-ay1))
-        return None
-
-    def draw_pipe_crossing_arc(ax, cx, cy, dx, dy, color, zorder):
-        """在交叉点画小弧线表示跨越（垂直于管线方向）"""
-        perp = (-dy, dx) if abs(dx)+abs(dy)>0 else (0.1, 0)
-        norm = (perp[0]**2+perp[1]**2)**0.5
-        if norm<1e-9: return
-        perp = (perp[0]/norm*0.15, perp[1]/norm*0.15)
-        pts = [(cx-perp[0], cy-perp[1]), (cx, cy), (cx+perp[0], cy+perp[1])]
-        ax.plot([p[0] for p in pts],[p[1] for p in pts], color=C_BG, linewidth=3, zorder=zorder-1)
-        ax.plot([p[0] for p in pts],[p[1] for p in pts], color=color, linewidth=2.5, zorder=zorder)
-
-    # 收集所有管线线段用于交叉检测
-    all_segments = []
-    for pts, dia, style in [(pipes_s,"DN25",("supply",C_WATER_SUPPLY)), (pipes_d,"DN110",("drain",C_WATER_DRAIN)), (pipes_h,"DN20",("hot",C_HOTWATER))]:
-        for plist in pts:
-            for i in range(len(plist)-1):
-                all_segments.append((plist[i],plist[i+1],style))
-
     # 绘制给水管（蓝色实线 2.5）
     for pts in pipes_s:
         for i in range(len(pts)-1):
@@ -865,16 +836,22 @@ def _plumbing_png(title, floor_name, walls, pipes_s, pipes_d, pipes_h, fixtures,
             rot=math.degrees(math.atan2(p2[1]-p1[1],p2[0]-p1[0]))
             ax.text(s(mx),s(my),"DN20",ha="center",va="center",fontsize=5,color=C_TEXT,bbox=dict(boxstyle="round,pad=0.15",facecolor="white",edgecolor="none"),rotation=rot if -90<rot<90 else rot+180,zorder=9)
 
-    # 立管编号：收集给水/排水立管位置（建筑边界的垂直线端点）
+    # 立管编号：收集给水/排水立管位置（建筑边界的端点，去重）
     riser_supply, riser_drain = [], []
     def _near_edge(x,y):
         return x<=600 or x>=BW-600 or y<=600 or y>=BH-600
+    def _key(p):
+        return (round(p[0]/500)*500, round(p[1]/500)*500)
+    seen_s = set()
     for pts in pipes_s:
         for pt in [pts[0], pts[-1]]:
-            if _near_edge(pt[0],pt[1]) and pt not in riser_supply: riser_supply.append(pt)
+            if _near_edge(pt[0],pt[1]) and _key(pt) not in seen_s:
+                seen_s.add(_key(pt)); riser_supply.append(pt)
+    seen_d = set()
     for pts in pipes_d:
         for pt in [pts[0], pts[-1]]:
-            if _near_edge(pt[0],pt[1]) and pt not in riser_drain: riser_drain.append(pt)
+            if _near_edge(pt[0],pt[1]) and _key(pt) not in seen_d:
+                seen_d.add(_key(pt)); riser_drain.append(pt)
     for i, pt in enumerate(riser_supply):
         ax.add_patch(patches.Circle((s(pt[0]),s(pt[1])),0.12,facecolor="white",edgecolor=C_WATER_SUPPLY,linewidth=1.5,zorder=10))
         ax.text(s(pt[0]),s(pt[1]),f"JL-{i+1}",ha="center",va="center",fontsize=6,fontweight="bold",color=C_WATER_SUPPLY,zorder=11)
@@ -905,20 +882,18 @@ def _plumbing_png(title, floor_name, walls, pipes_s, pipes_d, pipes_h, fixtures,
     # 房间名称（浅灰大字号，与平面图一致）
     C_ROOM_LABEL = "#AAAAAA"
     if floor_name == "一层":
-        X1,NX1,NX2,MX1,F1_Y0,F1_Y1,F1_MY1 = F1_X1,F1_NX1,F1_NX2,F1_MX1,F1_Y0,F1_Y1,F1_MY1
-        rooms = [((OW+X1)/2,(OW+F1_Y0)/2,"客厅"),((X1+BW)/2,(OW+F1_Y0)/2,"玄关"),((OW+X1)/2,(F1_Y0+F1_Y1)/2,"客餐厅 LDK"),
-                 ((X1+MX1)/2,(F1_Y0+F1_Y1)/2,"主卧室1"),((MX1+BW)/2,(F1_Y0+F1_MY1)/2,"主卫1"),((MX1+BW)/2,(F1_MY1+F1_Y1)/2,"衣帽间"),
-                 ((OW+NX1)/2,(F1_Y1+BH)/2,"厨房"),((NX1+NX2)/2,(F1_Y1+BH)/2,"客卫"),((NX2+BW)/2,(F1_Y1+BH)/2,"楼梯间")]
+        rooms = [((OW+F1_X1)/2,(OW+F1_Y0)/2,"客厅"),((F1_X1+BW)/2,(OW+F1_Y0)/2,"玄关"),((OW+F1_X1)/2,(F1_Y0+F1_Y1)/2,"客餐厅 LDK"),
+                 ((F1_X1+F1_MX1)/2,(F1_Y0+F1_Y1)/2,"主卧室1"),((F1_MX1+BW)/2,(F1_Y0+F1_MY1)/2,"主卫1"),((F1_MX1+BW)/2,(F1_MY1+F1_Y1)/2,"衣帽间"),
+                 ((OW+F1_NX1)/2,(F1_Y1+BH)/2,"厨房"),((F1_NX1+F1_NX2)/2,(F1_Y1+BH)/2,"客卫"),((F1_NX2+BW)/2,(F1_Y1+BH)/2,"楼梯间")]
     else:
-        X1,NX1,NX2,NX3,F2_Y0,F2_Y1,F2_Y2 = F2_X1,F2_NX1,F2_NX2,F2_NX3,F2_Y0,F2_Y1,F2_Y2
         YM = F2_Y2+IW+(BH-OW-F2_Y2-IW)//2
-        rooms = [(BW/2,F2_Y0/2,"南向大阳台"),((OW+X1)/2,(F2_Y0+F2_Y1)/2,"次卧室1"),((X1+BW)/2,(F2_Y0+F2_Y1)/2,"次卧室2"),
-                 (BW/2,(F2_Y1+F2_Y2)/2,"走廊"),((OW+NX1)/2,(F2_Y2+BH)/2,"主卧室2"),((NX1+NX2)/2,(F2_Y2+BH)/2,"主卫2"),
-                 ((NX2+NX3)/2,(F2_Y2+BH)/2,"主卧室3"),((NX3+BW)/2,(F2_Y2+YM)/2,"公卫"),((NX3+BW)/2,(YM+BH)/2,"楼梯间")]
+        rooms = [(BW/2,F2_Y0/2,"南向大阳台"),((OW+F2_X1)/2,(F2_Y0+F2_Y1)/2,"次卧室1"),((F2_X1+BW)/2,(F2_Y0+F2_Y1)/2,"次卧室2"),
+                 (BW/2,(F2_Y1+F2_Y2)/2,"走廊"),((OW+F2_NX1)/2,(F2_Y2+BH)/2,"主卧室2"),((F2_NX1+F2_NX2)/2,(F2_Y2+BH)/2,"主卫2"),
+                 ((F2_NX2+F2_NX3)/2,(F2_Y2+BH)/2,"主卧室3"),((F2_NX3+BW)/2,(F2_Y2+YM)/2,"公卫"),((F2_NX3+BW)/2,(YM+BH)/2,"楼梯间")]
     for cx,cy,name in rooms:
         ax.text(s(cx),s(cy),name,ha="center",va="center",fontsize=14,color=C_ROOM_LABEL,zorder=4)
 
-    # 给水器具符号：淋浴头/水龙头轮廓
+    # 给水器具符号：淋浴头/水龙头/地漏轮廓
     def fixture_shower(ax, x, y, color):
         ax.add_patch(patches.Circle((s(x),s(y)),0.06,facecolor="white",edgecolor=color,linewidth=1,zorder=8))
         for i in range(6):
@@ -927,9 +902,14 @@ def _plumbing_png(title, floor_name, walls, pipes_s, pipes_d, pipes_h, fixtures,
     def fixture_faucet(ax, x, y, color):
         ax.add_patch(patches.Rectangle((s(x)-0.04,s(y)-0.03),0.08,0.06,facecolor="none",edgecolor=color,linewidth=1,zorder=8))
         ax.plot([s(x)-0.02,s(x)+0.02],[s(y),s(y)],color=color,linewidth=1,zorder=8)
+    def fixture_drain(ax, x, y, color):
+        ax.add_patch(patches.Circle((s(x),s(y)),0.05,facecolor="white",edgecolor=color,linewidth=1,zorder=8))
+        ax.plot([s(x)-0.04,s(x)+0.04],[s(y),s(y)],color=color,linewidth=0.8,zorder=8)
     for (x,y,txt,c) in fixtures:
-        if "淋浴" in txt or "排水" in txt and "卫" in txt:
-            fixture_shower(ax, x-0.15, y, c) if "主卫" in txt else fixture_faucet(ax, x, y, c)
+        if "主卫" in txt and "给水" in txt:
+            fixture_shower(ax, x, y, c)
+        elif "排水" in txt:
+            fixture_drain(ax, x, y, c)
         else:
             fixture_faucet(ax, x, y, c)
         ax.text(s(x),s(y)-0.22,txt,ha="center",va="top",fontsize=5,color=c,zorder=10)
