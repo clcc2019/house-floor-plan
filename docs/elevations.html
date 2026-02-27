@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>立面·剖面·屋顶 — 现代简约别墅</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="inner">
+    <a href="index.html" class="brand">别墅图纸</a>
+    <a href="renderings.html" class="nav-link">效果图</a>
+    <a href="plans.html" class="nav-link">平面图</a>
+    <a href="elevations.html" class="nav-link active">立面·剖面·屋顶</a>
+    <a href="mep.html" class="nav-link">给排水·电气</a>
+  </div>
+</header>
+
+<section class="page-hero">
+  <h1>立面 · 剖面 · 屋顶</h1>
+  <p>四向立面、纵向剖面、屋顶排水 — SVG 矢量图，点击可无损放大</p>
+</section>
+
+<main>
+
+<section class="section fade-in">
+  <div class="section-header">
+    <div class="section-num">01 — 建筑设计 · 立面图</div>
+    <h2 class="section-title">四向立面图</h2>
+    <p class="section-desc">展示建筑外立面的门窗布局、层高与标高</p>
+  </div>
+  <div class="gallery cols-2">
+    <div class="card">
+      <div class="card-img" data-viewer data-viewer-svg="images/南立面图.svg" data-viewer-alt="南立面图 South Elevation">
+        <img src="images/南立面图.png" alt="南立面图" loading="lazy">
+      </div>
+      <div class="card-info"><span class="card-name">南立面图 South Elevation</span><span class="card-tag">SVG</span></div>
+    </div>
+    <div class="card">
+      <div class="card-img" data-viewer data-viewer-svg="images/北立面图.svg" data-viewer-alt="北立面图 North Elevation">
+        <img src="images/北立面图.png" alt="北立面图" loading="lazy">
+      </div>
+      <div class="card-info"><span class="card-name">北立面图 North Elevation</span><span class="card-tag">SVG</span></div>
+    </div>
+    <div class="card">
+      <div class="card-img" data-viewer data-viewer-svg="images/东立面图.svg" data-viewer-alt="东立面图 East Elevation">
+        <img src="images/东立面图.png" alt="东立面图" loading="lazy">
+      </div>
+      <div class="card-info"><span class="card-name">东立面图 East Elevation</span><span class="card-tag">SVG</span></div>
+    </div>
+    <div class="card">
+      <div class="card-img" data-viewer data-viewer-svg="images/西立面图.svg" data-viewer-alt="西立面图 West Elevation">
+        <img src="images/西立面图.png" alt="西立面图" loading="lazy">
+      </div>
+      <div class="card-info"><span class="card-name">西立面图 West Elevation</span><span class="card-tag">SVG</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="section fade-in">
+  <div class="section-header">
+    <div class="section-num">01 — 建筑设计 · 剖面图</div>
+    <h2 class="section-title">剖面图</h2>
+    <p class="section-desc">建筑内部纵向剖切 — 展示楼板、楼梯、层高关系</p>
+  </div>
+  <div class="gallery cols-1">
+    <div class="card">
+      <div class="card-img" data-viewer data-viewer-svg="images/1-1剖面图.svg" data-viewer-alt="1-1 剖面图 Section 1-1">
+        <img src="images/1-1剖面图.png" alt="1-1剖面图" loading="lazy">
+      </div>
+      <div class="card-info"><span class="card-name">1-1 剖面图 Section 1-1</span><span class="card-tag">SVG</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="section fade-in">
+  <div class="section-header">
+    <div class="section-num">01 — 建筑设计 · 屋顶</div>
+    <h2 class="section-title">屋顶平面图</h2>
+    <p class="section-desc">屋面找坡、落水管位置、检修口 — 屋顶排水设计</p>
+  </div>
+  <div class="gallery cols-1">
+    <div class="card">
+      <div class="card-img" data-viewer data-viewer-svg="images/屋顶平面图.svg" data-viewer-alt="屋顶平面图 Roof Plan">
+        <img src="images/屋顶平面图.png" alt="屋顶平面图" loading="lazy">
+      </div>
+      <div class="card-info"><span class="card-name">屋顶平面图 Roof Plan</span><span class="card-tag">SVG</span></div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <p><a href="index.html">← 返回首页</a></p>
+  <p style="margin-top:.6rem">点击图纸放大 · 滚轮缩放 · 拖拽平移 · 双击切换缩放</p>
+</footer>
+
+<div class="viewer-overlay" id="viewer-overlay">
+  <div class="viewer-toolbar">
+    <span class="viewer-title"></span>
+    <div class="viewer-btns">
+      <button class="btn-fit" title="适应窗口 (0)">⊞</button>
+      <button class="btn-one" title="100% (1)">1:1</button>
+      <button class="btn-zin" title="放大 (+)">＋</button>
+      <button class="btn-zout" title="缩小 (-)">－</button>
+      <button class="btn-close" title="关闭 (Esc)">✕</button>
+    </div>
+  </div>
+  <div class="viewer-container">
+    <div class="viewer-content"></div>
+    <div class="viewer-zoom-info"></div>
+  </div>
+</div>
+
+<script src="viewer.js"></script>
+</body>
+</html>

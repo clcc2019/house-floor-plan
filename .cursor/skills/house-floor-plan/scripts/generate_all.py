@@ -77,7 +77,14 @@ def _s(v):
 #  DXF 工具
 # ══════════════════════════════════════════════
 
+_DXF_STYLE = "CJK"
+_DXF_FONT_TTF = os.path.join(os.path.dirname(os.path.abspath(__file__)), "fonts", "NotoSansSC-Subset.ttf")
+
 def setup_layers(doc):
+    if _DXF_STYLE not in doc.styles:
+        style = doc.styles.new(_DXF_STYLE)
+        style.dxf.font = "NotoSansSC-Subset.ttf"
+        style.set_extended_font_data(family="Noto Sans CJK SC", italic=False, bold=False)
     layers = [
         ("WALL", BLACK), ("WALL-FILL", BLACK), ("ROOM-FILL", LIGHT_FILL),
         ("DOOR", BLACK), ("WINDOW", BLUE), ("STAIRS", GRAY), ("TEXT", BLACK),
@@ -119,7 +126,7 @@ def room_fill(msp, x, y, w, h):
 
 
 def dxf_text(msp, x, y, text, height=200, layer="TEXT"):
-    msp.add_text(text, height=height, dxfattribs={"layer": layer, "color": BLACK}).set_placement(
+    msp.add_text(text, height=height, dxfattribs={"layer": layer, "color": BLACK, "style": _DXF_STYLE}).set_placement(
         (x, y), align=TextEntityAlignment.MIDDLE_CENTER)
 
 
@@ -128,7 +135,7 @@ def dxf_dim_h(msp, x1, x2, y, offset=-800):
     msp.add_line((x1, yo), (x2, yo), dxfattribs={"layer": "DIM", "color": RED})
     msp.add_line((x1, y), (x1, yo), dxfattribs={"layer": "DIM", "color": RED})
     msp.add_line((x2, y), (x2, yo), dxfattribs={"layer": "DIM", "color": RED})
-    msp.add_text(str(abs(x2-x1)), height=150, dxfattribs={"layer": "DIM", "color": RED}).set_placement(
+    msp.add_text(str(abs(x2-x1)), height=150, dxfattribs={"layer": "DIM", "color": RED, "style": _DXF_STYLE}).set_placement(
         ((x1+x2)/2, yo+100), align=TextEntityAlignment.MIDDLE_CENTER)
 
 
@@ -137,7 +144,7 @@ def dxf_dim_v(msp, y1, y2, x, offset=800):
     msp.add_line((xo, y1), (xo, y2), dxfattribs={"layer": "DIM", "color": RED})
     msp.add_line((x, y1), (xo, y1), dxfattribs={"layer": "DIM", "color": RED})
     msp.add_line((x, y2), (xo, y2), dxfattribs={"layer": "DIM", "color": RED})
-    msp.add_text(str(abs(y2-y1)), height=150, dxfattribs={"layer": "DIM", "color": RED}).set_placement(
+    msp.add_text(str(abs(y2-y1)), height=150, dxfattribs={"layer": "DIM", "color": RED, "style": _DXF_STYLE}).set_placement(
         (xo+100, (y1+y2)/2), align=TextEntityAlignment.MIDDLE_CENTER)
 
 
@@ -563,7 +570,7 @@ def _elev_dxf(name, width_m, windows, doors, filename):
     # 标高
     for (y, txt) in [(gl,"±0.000"),(f1fl,f"+{F1_FL:.3f}"),(f2fl,f"+{F2_FL:.3f}"),(roof,f"+{ROOF:.3f}"),(top,f"+{TOP:.3f}")]:
         msp.add_line((-200,y),(0,y), dxfattribs={"layer": "DIM", "color": RED})
-        msp.add_text(txt, height=100, dxfattribs={"layer": "DIM", "color": RED}).set_placement(
+        msp.add_text(txt, height=100, dxfattribs={"layer": "DIM", "color": RED, "style": _DXF_STYLE}).set_placement(
             (-300, y), align=TextEntityAlignment.MIDDLE_RIGHT)
 
     dxf_dim_h(msp, 0, w, gl)
@@ -1641,6 +1648,14 @@ if __name__ == "__main__":
 
     print("\n🎨 04-效果图")
     gen_render()
+
+    import shutil
+    if os.path.exists(_DXF_FONT_TTF):
+        for d in DIRS.values():
+            dst = os.path.join(d, os.path.basename(_DXF_FONT_TTF))
+            if not os.path.exists(dst):
+                shutil.copy2(_DXF_FONT_TTF, dst)
+        print("  ✓ 字体文件已复制到各图纸目录")
 
     print("\n" + "=" * 60)
     print("  全部完成！")

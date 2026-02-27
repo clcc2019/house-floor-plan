@@ -489,7 +489,7 @@ $SKPOLY
   9
 $TDCREATE
  40
-2461099.769386574
+2461099.7779166666
   9
 $TDUCREATE
  40
@@ -497,7 +497,7 @@ $TDUCREATE
   9
 $TDUPDATE
  40
-2461099.769386574
+2461099.7779166666
   9
 $TDUUPDATE
  40
@@ -549,7 +549,7 @@ $SPLINESEGS
   9
 $HANDSEED
   5
-E6
+E7
   9
 $SURFTAB1
  70
@@ -929,11 +929,11 @@ $PSTYLEMODE
   9
 $FINGERPRINTGUID
   2
-{FD6E5795-84DE-4422-AD55-7BA9D7AB961B}
+{0592D7D6-DF0C-4A8E-8658-4011D6275F65}
   9
 $VERSIONGUID
   2
-{D0B74245-86A3-49A5-86B1-3F0FEFC48626}
+{5BB4AFBC-DB60-4959-86E1-1050E953ED52}
   9
 $EXTNAMES
 290
@@ -1603,7 +1603,7 @@ Continuous
   0
 LAYER
   5
-2F
+30
 330
 1
 100
@@ -1627,7 +1627,7 @@ Continuous
   0
 LAYER
   5
-30
+31
 330
 1
 100
@@ -1651,7 +1651,7 @@ Continuous
   0
 LAYER
   5
-31
+32
 330
 1
 100
@@ -1675,7 +1675,7 @@ Continuous
   0
 LAYER
   5
-32
+33
 330
 1
 100
@@ -1699,7 +1699,7 @@ Continuous
   0
 LAYER
   5
-33
+34
 330
 1
 100
@@ -1723,7 +1723,7 @@ Continuous
   0
 LAYER
   5
-34
+35
 330
 1
 100
@@ -1747,7 +1747,7 @@ Continuous
   0
 LAYER
   5
-35
+36
 330
 1
 100
@@ -1771,7 +1771,7 @@ Continuous
   0
 LAYER
   5
-36
+37
 330
 1
 100
@@ -1795,7 +1795,7 @@ Continuous
   0
 LAYER
   5
-37
+38
 330
 1
 100
@@ -1819,7 +1819,7 @@ Continuous
   0
 LAYER
   5
-38
+39
 330
 1
 100
@@ -1843,7 +1843,7 @@ Continuous
   0
 LAYER
   5
-39
+3A
 330
 1
 100
@@ -1867,7 +1867,7 @@ Continuous
   0
 LAYER
   5
-3A
+3B
 330
 1
 100
@@ -1891,7 +1891,7 @@ Continuous
   0
 LAYER
   5
-3B
+3C
 330
 1
 100
@@ -1915,7 +1915,7 @@ Continuous
   0
 LAYER
   5
-3C
+3D
 330
 1
 100
@@ -1939,7 +1939,7 @@ Continuous
   0
 LAYER
   5
-3D
+3E
 330
 1
 100
@@ -1963,7 +1963,7 @@ Continuous
   0
 LAYER
   5
-3E
+3F
 330
 1
 100
@@ -1987,7 +1987,7 @@ Continuous
   0
 LAYER
   5
-3F
+40
 330
 1
 100
@@ -2011,7 +2011,7 @@ Continuous
   0
 LAYER
   5
-40
+41
 330
 1
 100
@@ -2035,7 +2035,7 @@ Continuous
   0
 LAYER
   5
-41
+42
 330
 1
 100
@@ -2059,7 +2059,7 @@ Continuous
   0
 LAYER
   5
-42
+43
 330
 1
 100
@@ -2083,7 +2083,7 @@ Continuous
   0
 LAYER
   5
-43
+44
 330
 1
 100
@@ -2107,7 +2107,7 @@ Continuous
   0
 LAYER
   5
-44
+45
 330
 1
 100
@@ -2131,7 +2131,7 @@ Continuous
   0
 LAYER
   5
-45
+46
 330
 1
 100
@@ -2165,7 +2165,7 @@ STYLE
 100
 AcDbSymbolTable
  70
-1
+2
   0
 STYLE
   5
@@ -2194,6 +2194,40 @@ Standard
 txt
   4
 
+  0
+STYLE
+  5
+2F
+330
+5
+100
+AcDbSymbolTableRecord
+100
+AcDbTextStyleTableRecord
+  2
+CJK
+ 70
+0
+ 40
+0.0
+ 41
+1.0
+ 50
+0.0
+ 71
+0
+ 42
+2.5
+  3
+NotoSansSC-Subset.ttf
+  4
+
+1001
+ACAD
+1000
+Noto Sans CJK SC
+1071
+34
   0
 ENDTAB
   0
@@ -2253,7 +2287,7 @@ ACAD
   0
 APPID
   5
-E3
+E4
 330
 3
 100
@@ -2267,7 +2301,7 @@ HATCHBACKGROUNDCOLOR
   0
 APPID
   5
-E4
+E5
 330
 3
 100
@@ -2577,7 +2611,7 @@ ENTITIES
   0
 HATCH
   5
-46
+47
 330
 17
 100
@@ -2646,46 +2680,6 @@ SOLID
 0
   0
 LWPOLYLINE
-  5
-47
-330
-17
-100
-AcDbEntity
-  8
-WALL
- 62
-250
-370
-50
-100
-AcDbPolyline
- 90
-5
- 70
-1
- 10
-0.0
- 20
-0.0
- 10
-14000.0
- 20
-0.0
- 10
-14000.0
- 20
-240.0
- 10
-0.0
- 20
-240.0
- 10
-0.0
- 20
-0.0
-  0
-HATCH
   5
 48
 330
@@ -2693,69 +2687,39 @@ HATCH
 100
 AcDbEntity
   8
-WALL-FILL
+WALL
  62
 250
+370
+50
 100
-AcDbHatch
- 10
-0.0
- 20
-0.0
- 30
-0.0
-210
-0.0
-220
-0.0
-230
-1.0
-  2
-SOLID
+AcDbPolyline
+ 90
+5
  70
 1
- 71
-0
- 91
-1
- 92
-3
- 72
-0
- 73
-1
- 93
-5
  10
 0.0
  20
-10760.0
+0.0
  10
 14000.0
  20
-10760.0
+0.0
  10
 14000.0
  20
-11000.0
+240.0
  10
 0.0
  20
-11000.0
+240.0
  10
 0.0
  20
-10760.0
- 97
-0
- 75
-0
- 76
-1
- 98
-0
+0.0
   0
-LWPOLYLINE
+HATCH
   5
 49
 330
@@ -2763,17 +2727,39 @@ LWPOLYLINE
 100
 AcDbEntity
   8
-WALL
+WALL-FILL
  62
 250
-370
-50
 100
-AcDbPolyline
- 90
-5
+AcDbHatch
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+210
+0.0
+220
+0.0
+230
+1.0
+  2
+SOLID
  70
 1
+ 71
+0
+ 91
+1
+ 92
+3
+ 72
+0
+ 73
+1
+ 93
+5
  10
 0.0
  20
@@ -2794,8 +2780,16 @@ AcDbPolyline
 0.0
  20
 10760.0
+ 97
+0
+ 75
+0
+ 76
+1
+ 98
+0
   0
-HATCH
+LWPOLYLINE
   5
 4A
 330
@@ -2803,6 +2797,46 @@ HATCH
 100
 AcDbEntity
   8
+WALL
+ 62
+250
+370
+50
+100
+AcDbPolyline
+ 90
+5
+ 70
+1
+ 10
+0.0
+ 20
+10760.0
+ 10
+14000.0
+ 20
+10760.0
+ 10
+14000.0
+ 20
+11000.0
+ 10
+0.0
+ 20
+11000.0
+ 10
+0.0
+ 20
+10760.0
+  0
+HATCH
+  5
+4B
+330
+17
+100
+AcDbEntity
+  8
 WALL-FILL
  62
 250
@@ -2867,7 +2901,7 @@ SOLID
   0
 LWPOLYLINE
   5
-4B
+4C
 330
 17
 100
@@ -2907,7 +2941,7 @@ AcDbPolyline
   0
 HATCH
   5
-4C
+4D
 330
 17
 100
@@ -2977,7 +3011,7 @@ SOLID
   0
 LWPOLYLINE
   5
-4D
+4E
 330
 17
 100
@@ -3017,7 +3051,7 @@ AcDbPolyline
   0
 CIRCLE
   5
-4E
+4F
 330
 17
 100
@@ -3039,7 +3073,7 @@ AcDbCircle
   0
 LINE
   5
-4F
+50
 330
 17
 100
@@ -3065,7 +3099,7 @@ AcDbLine
   0
 LINE
   5
-50
+51
 330
 17
 100
@@ -3091,7 +3125,7 @@ AcDbLine
   0
 TEXT
   5
-51
+52
 330
 17
 100
@@ -3112,6 +3146,8 @@ AcDbText
 100.0
   1
 主卧2主灯
+  7
+CJK
  72
 1
  11
@@ -3127,7 +3163,7 @@ AcDbText
   0
 CIRCLE
   5
-52
+53
 330
 17
 100
@@ -3149,7 +3185,7 @@ AcDbCircle
   0
 LINE
   5
-53
+54
 330
 17
 100
@@ -3175,7 +3211,7 @@ AcDbLine
   0
 LINE
   5
-54
+55
 330
 17
 100
@@ -3201,7 +3237,7 @@ AcDbLine
   0
 TEXT
   5
-55
+56
 330
 17
 100
@@ -3222,6 +3258,8 @@ AcDbText
 100.0
   1
 主卫2灯
+  7
+CJK
  72
 1
  11
@@ -3237,7 +3275,7 @@ AcDbText
   0
 CIRCLE
   5
-56
+57
 330
 17
 100
@@ -3259,7 +3297,7 @@ AcDbCircle
   0
 LINE
   5
-57
+58
 330
 17
 100
@@ -3285,7 +3323,7 @@ AcDbLine
   0
 LINE
   5
-58
+59
 330
 17
 100
@@ -3311,7 +3349,7 @@ AcDbLine
   0
 TEXT
   5
-59
+5A
 330
 17
 100
@@ -3332,6 +3370,8 @@ AcDbText
 100.0
   1
 主卧3主灯
+  7
+CJK
  72
 1
  11
@@ -3347,7 +3387,7 @@ AcDbText
   0
 CIRCLE
   5
-5A
+5B
 330
 17
 100
@@ -3369,7 +3409,7 @@ AcDbCircle
   0
 LINE
   5
-5B
+5C
 330
 17
 100
@@ -3395,7 +3435,7 @@ AcDbLine
   0
 LINE
   5
-5C
+5D
 330
 17
 100
@@ -3421,7 +3461,7 @@ AcDbLine
   0
 TEXT
   5
-5D
+5E
 330
 17
 100
@@ -3442,6 +3482,8 @@ AcDbText
 100.0
   1
 公卫灯
+  7
+CJK
  72
 1
  11
@@ -3457,7 +3499,7 @@ AcDbText
   0
 CIRCLE
   5
-5E
+5F
 330
 17
 100
@@ -3479,7 +3521,7 @@ AcDbCircle
   0
 LINE
   5
-5F
+60
 330
 17
 100
@@ -3505,7 +3547,7 @@ AcDbLine
   0
 LINE
   5
-60
+61
 330
 17
 100
@@ -3531,7 +3573,7 @@ AcDbLine
   0
 TEXT
   5
-61
+62
 330
 17
 100
@@ -3552,6 +3594,8 @@ AcDbText
 100.0
   1
 次卧1灯
+  7
+CJK
  72
 1
  11
@@ -3567,7 +3611,7 @@ AcDbText
   0
 CIRCLE
   5
-62
+63
 330
 17
 100
@@ -3589,7 +3633,7 @@ AcDbCircle
   0
 LINE
   5
-63
+64
 330
 17
 100
@@ -3615,7 +3659,7 @@ AcDbLine
   0
 LINE
   5
-64
+65
 330
 17
 100
@@ -3641,7 +3685,7 @@ AcDbLine
   0
 TEXT
   5
-65
+66
 330
 17
 100
@@ -3662,6 +3706,8 @@ AcDbText
 100.0
   1
 次卧2灯
+  7
+CJK
  72
 1
  11
@@ -3677,7 +3723,7 @@ AcDbText
   0
 CIRCLE
   5
-66
+67
 330
 17
 100
@@ -3699,7 +3745,7 @@ AcDbCircle
   0
 LINE
   5
-67
+68
 330
 17
 100
@@ -3725,7 +3771,7 @@ AcDbLine
   0
 LINE
   5
-68
+69
 330
 17
 100
@@ -3751,7 +3797,7 @@ AcDbLine
   0
 TEXT
   5
-69
+6A
 330
 17
 100
@@ -3772,6 +3818,8 @@ AcDbText
 100.0
   1
 次卧2书桌灯
+  7
+CJK
  72
 1
  11
@@ -3787,7 +3835,7 @@ AcDbText
   0
 CIRCLE
   5
-6A
+6B
 330
 17
 100
@@ -3809,7 +3857,7 @@ AcDbCircle
   0
 LINE
   5
-6B
+6C
 330
 17
 100
@@ -3835,7 +3883,7 @@ AcDbLine
   0
 LINE
   5
-6C
+6D
 330
 17
 100
@@ -3861,7 +3909,7 @@ AcDbLine
   0
 TEXT
   5
-6D
+6E
 330
 17
 100
@@ -3882,6 +3930,8 @@ AcDbText
 100.0
   1
 走廊灯1
+  7
+CJK
  72
 1
  11
@@ -3897,7 +3947,7 @@ AcDbText
   0
 CIRCLE
   5
-6E
+6F
 330
 17
 100
@@ -3919,7 +3969,7 @@ AcDbCircle
   0
 LINE
   5
-6F
+70
 330
 17
 100
@@ -3945,7 +3995,7 @@ AcDbLine
   0
 LINE
   5
-70
+71
 330
 17
 100
@@ -3971,7 +4021,7 @@ AcDbLine
   0
 TEXT
   5
-71
+72
 330
 17
 100
@@ -3992,6 +4042,8 @@ AcDbText
 100.0
   1
 走廊灯2
+  7
+CJK
  72
 1
  11
@@ -4007,7 +4059,7 @@ AcDbText
   0
 CIRCLE
   5
-72
+73
 330
 17
 100
@@ -4029,7 +4081,7 @@ AcDbCircle
   0
 LINE
   5
-73
+74
 330
 17
 100
@@ -4055,7 +4107,7 @@ AcDbLine
   0
 LINE
   5
-74
+75
 330
 17
 100
@@ -4081,7 +4133,7 @@ AcDbLine
   0
 TEXT
   5
-75
+76
 330
 17
 100
@@ -4102,6 +4154,8 @@ AcDbText
 100.0
   1
 走廊灯3
+  7
+CJK
  72
 1
  11
@@ -4117,7 +4171,7 @@ AcDbText
   0
 CIRCLE
   5
-76
+77
 330
 17
 100
@@ -4139,7 +4193,7 @@ AcDbCircle
   0
 LINE
   5
-77
+78
 330
 17
 100
@@ -4165,7 +4219,7 @@ AcDbLine
   0
 LINE
   5
-78
+79
 330
 17
 100
@@ -4191,7 +4245,7 @@ AcDbLine
   0
 TEXT
   5
-79
+7A
 330
 17
 100
@@ -4212,6 +4266,8 @@ AcDbText
 100.0
   1
 楼梯灯
+  7
+CJK
  72
 1
  11
@@ -4227,7 +4283,7 @@ AcDbText
   0
 CIRCLE
   5
-7A
+7B
 330
 17
 100
@@ -4249,7 +4305,7 @@ AcDbCircle
   0
 LINE
   5
-7B
+7C
 330
 17
 100
@@ -4275,7 +4331,7 @@ AcDbLine
   0
 LINE
   5
-7C
+7D
 330
 17
 100
@@ -4301,7 +4357,7 @@ AcDbLine
   0
 TEXT
   5
-7D
+7E
 330
 17
 100
@@ -4322,6 +4378,8 @@ AcDbText
 100.0
   1
 阳台灯1
+  7
+CJK
  72
 1
  11
@@ -4337,7 +4395,7 @@ AcDbText
   0
 CIRCLE
   5
-7E
+7F
 330
 17
 100
@@ -4359,7 +4417,7 @@ AcDbCircle
   0
 LINE
   5
-7F
+80
 330
 17
 100
@@ -4385,7 +4443,7 @@ AcDbLine
   0
 LINE
   5
-80
+81
 330
 17
 100
@@ -4411,7 +4469,7 @@ AcDbLine
   0
 TEXT
   5
-81
+82
 330
 17
 100
@@ -4432,6 +4490,8 @@ AcDbText
 100.0
   1
 阳台灯2
+  7
+CJK
  72
 1
  11
@@ -4447,7 +4507,7 @@ AcDbText
   0
 CIRCLE
   5
-82
+83
 330
 17
 100
@@ -4469,7 +4529,7 @@ AcDbCircle
   0
 LINE
   5
-83
+84
 330
 17
 100
@@ -4495,7 +4555,7 @@ AcDbLine
   0
 LINE
   5
-84
+85
 330
 17
 100
@@ -4521,7 +4581,7 @@ AcDbLine
   0
 TEXT
   5
-85
+86
 330
 17
 100
@@ -4542,6 +4602,8 @@ AcDbText
 100.0
   1
 阳台灯3
+  7
+CJK
  72
 1
  11
@@ -4557,7 +4619,7 @@ AcDbText
   0
 LWPOLYLINE
   5
-86
+87
 330
 17
 100
@@ -4594,42 +4656,6 @@ AcDbPolyline
 7960.0
   0
 TEXT
-  5
-87
-330
-17
-100
-AcDbEntity
-  8
-TEXT
- 62
-250
-100
-AcDbText
- 10
-600.0
- 20
-7850.0
- 30
-0.0
- 40
-80.0
-  1
-床头USB L
- 72
-1
- 11
-600.0
- 21
-7850.0
- 31
-0.0
-100
-AcDbText
- 73
-2
-  0
-LWPOLYLINE
   5
 88
 330
@@ -4637,6 +4663,44 @@ LWPOLYLINE
 100
 AcDbEntity
   8
+TEXT
+ 62
+250
+100
+AcDbText
+ 10
+600.0
+ 20
+7850.0
+ 30
+0.0
+ 40
+80.0
+  1
+床头USB L
+  7
+CJK
+ 72
+1
+ 11
+600.0
+ 21
+7850.0
+ 31
+0.0
+100
+AcDbText
+ 73
+2
+  0
+LWPOLYLINE
+  5
+89
+330
+17
+100
+AcDbEntity
+  8
 ELEC-SOCKET
  62
 3
@@ -4669,7 +4733,7 @@ AcDbPolyline
   0
 TEXT
   5
-89
+8A
 330
 17
 100
@@ -4690,6 +4754,8 @@ AcDbText
 80.0
   1
 床头L
+  7
+CJK
  72
 1
  11
@@ -4705,7 +4771,7 @@ AcDbText
   0
 LWPOLYLINE
   5
-8A
+8B
 330
 17
 100
@@ -4743,7 +4809,7 @@ AcDbPolyline
   0
 TEXT
   5
-8B
+8C
 330
 17
 100
@@ -4764,6 +4830,8 @@ AcDbText
 80.0
   1
 床头USB R
+  7
+CJK
  72
 1
  11
@@ -4779,7 +4847,7 @@ AcDbText
   0
 LWPOLYLINE
   5
-8C
+8D
 330
 17
 100
@@ -4817,7 +4885,7 @@ AcDbPolyline
   0
 TEXT
   5
-8D
+8E
 330
 17
 100
@@ -4838,6 +4906,8 @@ AcDbText
 80.0
   1
 床头R
+  7
+CJK
  72
 1
  11
@@ -4853,7 +4923,7 @@ AcDbText
   0
 LWPOLYLINE
   5
-8E
+8F
 330
 17
 100
@@ -4891,7 +4961,7 @@ AcDbPolyline
   0
 TEXT
   5
-8F
+90
 330
 17
 100
@@ -4912,6 +4982,8 @@ AcDbText
 80.0
   1
 空调16A
+  7
+CJK
  72
 1
  11
@@ -4927,7 +4999,7 @@ AcDbText
   0
 LWPOLYLINE
   5
-90
+91
 330
 17
 100
@@ -4965,7 +5037,7 @@ AcDbPolyline
   0
 TEXT
   5
-91
+92
 330
 17
 100
@@ -4986,6 +5058,8 @@ AcDbText
 80.0
   1
 床头USB L
+  7
+CJK
  72
 1
  11
@@ -5001,7 +5075,7 @@ AcDbText
   0
 LWPOLYLINE
   5
-92
+93
 330
 17
 100
@@ -5039,7 +5113,7 @@ AcDbPolyline
   0
 TEXT
   5
-93
+94
 330
 17
 100
@@ -5060,6 +5134,8 @@ AcDbText
 80.0
   1
 床头USB R
+  7
+CJK
  72
 1
  11
@@ -5075,7 +5151,7 @@ AcDbText
   0
 LWPOLYLINE
   5
-94
+95
 330
 17
 100
@@ -5113,7 +5189,7 @@ AcDbPolyline
   0
 TEXT
   5
-95
+96
 330
 17
 100
@@ -5134,6 +5210,8 @@ AcDbText
 80.0
   1
 床头L
+  7
+CJK
  72
 1
  11
@@ -5149,7 +5227,7 @@ AcDbText
   0
 LWPOLYLINE
   5
-96
+97
 330
 17
 100
@@ -5187,7 +5265,7 @@ AcDbPolyline
   0
 TEXT
   5
-97
+98
 330
 17
 100
@@ -5208,6 +5286,8 @@ AcDbText
 80.0
   1
 床头R
+  7
+CJK
  72
 1
  11
@@ -5223,7 +5303,7 @@ AcDbText
   0
 LWPOLYLINE
   5
-98
+99
 330
 17
 100
@@ -5260,42 +5340,6 @@ AcDbPolyline
 10460.0
   0
 TEXT
-  5
-99
-330
-17
-100
-AcDbEntity
-  8
-TEXT
- 62
-250
-100
-AcDbText
- 10
-10500.0
- 20
-10350.0
- 30
-0.0
- 40
-80.0
-  1
-空调16A
- 72
-1
- 11
-10500.0
- 21
-10350.0
- 31
-0.0
-100
-AcDbText
- 73
-2
-  0
-LWPOLYLINE
   5
 9A
 330
@@ -5303,37 +5347,37 @@ LWPOLYLINE
 100
 AcDbEntity
   8
-ELEC-SOCKET
- 62
-3
-100
-AcDbPolyline
- 90
-5
- 70
-1
- 10
-540.0
- 20
-1960.0
- 10
-660.0
- 20
-1960.0
- 10
-660.0
- 20
-2040.0
- 10
-540.0
- 20
-2040.0
- 10
-540.0
- 20
-1960.0
-  0
 TEXT
+ 62
+250
+100
+AcDbText
+ 10
+10500.0
+ 20
+10350.0
+ 30
+0.0
+ 40
+80.0
+  1
+空调16A
+  7
+CJK
+ 72
+1
+ 11
+10500.0
+ 21
+10350.0
+ 31
+0.0
+100
+AcDbText
+ 73
+2
+  0
+LWPOLYLINE
   5
 9B
 330
@@ -5341,35 +5385,37 @@ TEXT
 100
 AcDbEntity
   8
-TEXT
+ELEC-SOCKET
  62
-250
+3
 100
-AcDbText
- 10
-600.0
- 20
-1850.0
- 30
-0.0
- 40
-80.0
-  1
-床头
- 72
+AcDbPolyline
+ 90
+5
+ 70
 1
- 11
-600.0
- 21
-1850.0
- 31
-0.0
-100
-AcDbText
- 73
-2
+ 10
+540.0
+ 20
+1960.0
+ 10
+660.0
+ 20
+1960.0
+ 10
+660.0
+ 20
+2040.0
+ 10
+540.0
+ 20
+2040.0
+ 10
+540.0
+ 20
+1960.0
   0
-LWPOLYLINE
+TEXT
   5
 9C
 330
@@ -5377,6 +5423,44 @@ LWPOLYLINE
 100
 AcDbEntity
   8
+TEXT
+ 62
+250
+100
+AcDbText
+ 10
+600.0
+ 20
+1850.0
+ 30
+0.0
+ 40
+80.0
+  1
+床头
+  7
+CJK
+ 72
+1
+ 11
+600.0
+ 21
+1850.0
+ 31
+0.0
+100
+AcDbText
+ 73
+2
+  0
+LWPOLYLINE
+  5
+9D
+330
+17
+100
+AcDbEntity
+  8
 ELEC-SOCKET
  62
 3
@@ -5409,7 +5493,7 @@ AcDbPolyline
   0
 TEXT
   5
-9D
+9E
 330
 17
 100
@@ -5430,6 +5514,8 @@ AcDbText
 80.0
   1
 USB
+  7
+CJK
  72
 1
  11
@@ -5445,7 +5531,7 @@ AcDbText
   0
 LWPOLYLINE
   5
-9E
+9F
 330
 17
 100
@@ -5483,7 +5569,7 @@ AcDbPolyline
   0
 TEXT
   5
-9F
+A0
 330
 17
 100
@@ -5504,6 +5590,8 @@ AcDbText
 80.0
   1
 书桌
+  7
+CJK
  72
 1
  11
@@ -5519,7 +5607,7 @@ AcDbText
   0
 LWPOLYLINE
   5
-A0
+A1
 330
 17
 100
@@ -5557,7 +5645,7 @@ AcDbPolyline
   0
 TEXT
   5
-A1
+A2
 330
 17
 100
@@ -5578,6 +5666,8 @@ AcDbText
 80.0
   1
 空调16A
+  7
+CJK
  72
 1
  11
@@ -5593,7 +5683,7 @@ AcDbText
   0
 LWPOLYLINE
   5
-A2
+A3
 330
 17
 100
@@ -5631,7 +5721,7 @@ AcDbPolyline
   0
 TEXT
   5
-A3
+A4
 330
 17
 100
@@ -5652,6 +5742,8 @@ AcDbText
 80.0
   1
 床头
+  7
+CJK
  72
 1
  11
@@ -5667,7 +5759,7 @@ AcDbText
   0
 LWPOLYLINE
   5
-A4
+A5
 330
 17
 100
@@ -5705,7 +5797,7 @@ AcDbPolyline
   0
 TEXT
   5
-A5
+A6
 330
 17
 100
@@ -5726,6 +5818,8 @@ AcDbText
 80.0
   1
 USB
+  7
+CJK
  72
 1
  11
@@ -5741,7 +5835,7 @@ AcDbText
   0
 LWPOLYLINE
   5
-A6
+A7
 330
 17
 100
@@ -5779,7 +5873,7 @@ AcDbPolyline
   0
 TEXT
   5
-A7
+A8
 330
 17
 100
@@ -5800,6 +5894,8 @@ AcDbText
 80.0
   1
 书桌
+  7
+CJK
  72
 1
  11
@@ -5815,7 +5911,7 @@ AcDbText
   0
 LWPOLYLINE
   5
-A8
+A9
 330
 17
 100
@@ -5853,7 +5949,7 @@ AcDbPolyline
   0
 TEXT
   5
-A9
+AA
 330
 17
 100
@@ -5874,6 +5970,8 @@ AcDbText
 80.0
   1
 空调16A
+  7
+CJK
  72
 1
  11
@@ -5889,7 +5987,7 @@ AcDbText
   0
 LWPOLYLINE
   5
-AA
+AB
 330
 17
 100
@@ -5927,7 +6025,7 @@ AcDbPolyline
   0
 TEXT
   5
-AB
+AC
 330
 17
 100
@@ -5948,6 +6046,8 @@ AcDbText
 80.0
   1
 电脑
+  7
+CJK
  72
 1
  11
@@ -5963,7 +6063,7 @@ AcDbText
   0
 LWPOLYLINE
   5
-AC
+AD
 330
 17
 100
@@ -6001,7 +6101,7 @@ AcDbPolyline
   0
 TEXT
   5
-AD
+AE
 330
 17
 100
@@ -6022,6 +6122,8 @@ AcDbText
 80.0
   1
 显示器
+  7
+CJK
  72
 1
  11
@@ -6037,7 +6139,7 @@ AcDbText
   0
 LWPOLYLINE
   5
-AE
+AF
 330
 17
 100
@@ -6075,7 +6177,7 @@ AcDbPolyline
   0
 TEXT
   5
-AF
+B0
 330
 17
 100
@@ -6096,6 +6198,8 @@ AcDbText
 80.0
   1
 USB
+  7
+CJK
  72
 1
  11
@@ -6111,7 +6215,7 @@ AcDbText
   0
 LWPOLYLINE
   5
-B0
+B1
 330
 17
 100
@@ -6148,42 +6252,6 @@ AcDbPolyline
 7460.0
   0
 TEXT
-  5
-B1
-330
-17
-100
-AcDbEntity
-  8
-TEXT
- 62
-250
-100
-AcDbText
- 10
-12000.0
- 20
-7350.0
- 30
-0.0
- 40
-80.0
-  1
-吹风机
- 72
-1
- 11
-12000.0
- 21
-7350.0
- 31
-0.0
-100
-AcDbText
- 73
-2
-  0
-LWPOLYLINE
   5
 B2
 330
@@ -6191,6 +6259,44 @@ B2
 100
 AcDbEntity
   8
+TEXT
+ 62
+250
+100
+AcDbText
+ 10
+12000.0
+ 20
+7350.0
+ 30
+0.0
+ 40
+80.0
+  1
+吹风机
+  7
+CJK
+ 72
+1
+ 11
+12000.0
+ 21
+7350.0
+ 31
+0.0
+100
+AcDbText
+ 73
+2
+  0
+LWPOLYLINE
+  5
+B3
+330
+17
+100
+AcDbEntity
+  8
 ELEC-SOCKET
  62
 3
@@ -6223,7 +6329,7 @@ AcDbPolyline
   0
 TEXT
   5
-B3
+B4
 330
 17
 100
@@ -6244,6 +6350,8 @@ AcDbText
 80.0
   1
 吹风机
+  7
+CJK
  72
 1
  11
@@ -6259,7 +6367,7 @@ AcDbText
   0
 LWPOLYLINE
   5
-B4
+B5
 330
 17
 100
@@ -6297,7 +6405,7 @@ AcDbPolyline
   0
 TEXT
   5
-B5
+B6
 330
 17
 100
@@ -6318,6 +6426,8 @@ AcDbText
 80.0
   1
 阳台
+  7
+CJK
  72
 1
  11
@@ -6333,7 +6443,7 @@ AcDbText
   0
 LWPOLYLINE
   5
-B6
+B7
 330
 17
 100
@@ -6371,7 +6481,7 @@ AcDbPolyline
   0
 TEXT
   5
-B7
+B8
 330
 17
 100
@@ -6392,6 +6502,8 @@ AcDbText
 80.0
   1
 洗衣机
+  7
+CJK
  72
 1
  11
@@ -6407,7 +6519,7 @@ AcDbText
   0
 CIRCLE
   5
-B8
+B9
 330
 17
 100
@@ -6429,7 +6541,7 @@ AcDbCircle
   0
 LINE
   5
-B9
+BA
 330
 17
 100
@@ -6455,7 +6567,7 @@ AcDbLine
   0
 TEXT
   5
-BA
+BB
 330
 17
 100
@@ -6476,6 +6588,8 @@ AcDbText
 80.0
   1
 主卧2(门口)
+  7
+CJK
  72
 1
  11
@@ -6491,7 +6605,7 @@ AcDbText
   0
 CIRCLE
   5
-BB
+BC
 330
 17
 100
@@ -6513,7 +6627,7 @@ AcDbCircle
   0
 LINE
   5
-BC
+BD
 330
 17
 100
@@ -6539,7 +6653,7 @@ AcDbLine
   0
 TEXT
   5
-BD
+BE
 330
 17
 100
@@ -6560,6 +6674,8 @@ AcDbText
 80.0
   1
 主卧2(床头)
+  7
+CJK
  72
 1
  11
@@ -6575,7 +6691,7 @@ AcDbText
   0
 CIRCLE
   5
-BE
+BF
 330
 17
 100
@@ -6597,7 +6713,7 @@ AcDbCircle
   0
 LINE
   5
-BF
+C0
 330
 17
 100
@@ -6623,7 +6739,7 @@ AcDbLine
   0
 TEXT
   5
-C0
+C1
 330
 17
 100
@@ -6644,6 +6760,8 @@ AcDbText
 80.0
   1
 主卧3(门口)
+  7
+CJK
  72
 1
  11
@@ -6659,7 +6777,7 @@ AcDbText
   0
 CIRCLE
   5
-C1
+C2
 330
 17
 100
@@ -6681,7 +6799,7 @@ AcDbCircle
   0
 LINE
   5
-C2
+C3
 330
 17
 100
@@ -6707,7 +6825,7 @@ AcDbLine
   0
 TEXT
   5
-C3
+C4
 330
 17
 100
@@ -6728,6 +6846,8 @@ AcDbText
 80.0
   1
 主卧3(床头)
+  7
+CJK
  72
 1
  11
@@ -6743,7 +6863,7 @@ AcDbText
   0
 CIRCLE
   5
-C4
+C5
 330
 17
 100
@@ -6765,7 +6885,7 @@ AcDbCircle
   0
 LINE
   5
-C5
+C6
 330
 17
 100
@@ -6791,7 +6911,7 @@ AcDbLine
   0
 TEXT
   5
-C6
+C7
 330
 17
 100
@@ -6812,6 +6932,8 @@ AcDbText
 80.0
   1
 主卫2
+  7
+CJK
  72
 1
  11
@@ -6827,7 +6949,7 @@ AcDbText
   0
 CIRCLE
   5
-C7
+C8
 330
 17
 100
@@ -6849,7 +6971,7 @@ AcDbCircle
   0
 LINE
   5
-C8
+C9
 330
 17
 100
@@ -6875,7 +6997,7 @@ AcDbLine
   0
 TEXT
   5
-C9
+CA
 330
 17
 100
@@ -6896,6 +7018,8 @@ AcDbText
 80.0
   1
 公卫
+  7
+CJK
  72
 1
  11
@@ -6911,7 +7035,7 @@ AcDbText
   0
 CIRCLE
   5
-CA
+CB
 330
 17
 100
@@ -6933,7 +7057,7 @@ AcDbCircle
   0
 LINE
   5
-CB
+CC
 330
 17
 100
@@ -6959,7 +7083,7 @@ AcDbLine
   0
 TEXT
   5
-CC
+CD
 330
 17
 100
@@ -6980,6 +7104,8 @@ AcDbText
 80.0
   1
 次卧1(门口)
+  7
+CJK
  72
 1
  11
@@ -6995,7 +7121,7 @@ AcDbText
   0
 CIRCLE
   5
-CD
+CE
 330
 17
 100
@@ -7017,7 +7143,7 @@ AcDbCircle
   0
 LINE
   5
-CE
+CF
 330
 17
 100
@@ -7043,7 +7169,7 @@ AcDbLine
   0
 TEXT
   5
-CF
+D0
 330
 17
 100
@@ -7064,6 +7190,8 @@ AcDbText
 80.0
   1
 次卧1(床头)
+  7
+CJK
  72
 1
  11
@@ -7079,7 +7207,7 @@ AcDbText
   0
 CIRCLE
   5
-D0
+D1
 330
 17
 100
@@ -7101,7 +7229,7 @@ AcDbCircle
   0
 LINE
   5
-D1
+D2
 330
 17
 100
@@ -7127,7 +7255,7 @@ AcDbLine
   0
 TEXT
   5
-D2
+D3
 330
 17
 100
@@ -7148,6 +7276,8 @@ AcDbText
 80.0
   1
 次卧2(门口)
+  7
+CJK
  72
 1
  11
@@ -7163,7 +7293,7 @@ AcDbText
   0
 CIRCLE
   5
-D3
+D4
 330
 17
 100
@@ -7185,7 +7315,7 @@ AcDbCircle
   0
 LINE
   5
-D4
+D5
 330
 17
 100
@@ -7211,7 +7341,7 @@ AcDbLine
   0
 TEXT
   5
-D5
+D6
 330
 17
 100
@@ -7232,6 +7362,8 @@ AcDbText
 80.0
   1
 次卧2(床头)
+  7
+CJK
  72
 1
  11
@@ -7247,7 +7379,7 @@ AcDbText
   0
 CIRCLE
   5
-D6
+D7
 330
 17
 100
@@ -7269,7 +7401,7 @@ AcDbCircle
   0
 LINE
   5
-D7
+D8
 330
 17
 100
@@ -7295,7 +7427,7 @@ AcDbLine
   0
 TEXT
   5
-D8
+D9
 330
 17
 100
@@ -7316,6 +7448,8 @@ AcDbText
 80.0
   1
 走廊(次卧侧)
+  7
+CJK
  72
 1
  11
@@ -7331,7 +7465,7 @@ AcDbText
   0
 CIRCLE
   5
-D9
+DA
 330
 17
 100
@@ -7353,7 +7487,7 @@ AcDbCircle
   0
 LINE
   5
-DA
+DB
 330
 17
 100
@@ -7379,7 +7513,7 @@ AcDbLine
   0
 TEXT
   5
-DB
+DC
 330
 17
 100
@@ -7400,6 +7534,8 @@ AcDbText
 80.0
   1
 走廊(主卧侧)
+  7
+CJK
  72
 1
  11
@@ -7415,7 +7551,7 @@ AcDbText
   0
 CIRCLE
   5
-DC
+DD
 330
 17
 100
@@ -7437,7 +7573,7 @@ AcDbCircle
   0
 LINE
   5
-DD
+DE
 330
 17
 100
@@ -7463,7 +7599,7 @@ AcDbLine
   0
 TEXT
   5
-DE
+DF
 330
 17
 100
@@ -7484,6 +7620,8 @@ AcDbText
 80.0
   1
 楼梯↓
+  7
+CJK
  72
 1
  11
@@ -7499,7 +7637,7 @@ AcDbText
   0
 CIRCLE
   5
-DF
+E0
 330
 17
 100
@@ -7521,7 +7659,7 @@ AcDbCircle
   0
 LINE
   5
-E0
+E1
 330
 17
 100
@@ -7547,7 +7685,7 @@ AcDbLine
   0
 TEXT
   5
-E1
+E2
 330
 17
 100
@@ -7568,6 +7706,8 @@ AcDbText
 80.0
   1
 阳台
+  7
+CJK
  72
 1
  11
@@ -7583,7 +7723,7 @@ AcDbText
   0
 TEXT
   5
-E2
+E3
 330
 17
 100
@@ -7604,6 +7744,8 @@ AcDbText
 350.0
   1
 二层电气平面图
+  7
+CJK
  72
 1
  11
@@ -8607,7 +8749,7 @@ CREATED_BY_EZDXF
   3
 WRITTEN_BY_EZDXF
 350
-E5
+E6
   0
 DICTIONARYVAR
   5
@@ -8619,11 +8761,11 @@ DictionaryVariables
 280
 0
   1
-1.4.3 @ 2026-02-27T10:27:55.169628+00:00
+1.4.3 @ 2026-02-27T10:40:12.816376+00:00
   0
 DICTIONARYVAR
   5
-E5
+E6
 330
 2D
 100
@@ -8631,7 +8773,7 @@ DictionaryVariables
 280
 0
   1
-1.4.3 @ 2026-02-27T10:27:55.172724+00:00
+1.4.3 @ 2026-02-27T10:40:12.819634+00:00
   0
 ENDSEC
   0

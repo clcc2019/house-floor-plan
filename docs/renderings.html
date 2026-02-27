@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>建筑效果图 — 现代简约别墅</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="inner">
+    <a href="index.html" class="brand">别墅图纸</a>
+    <a href="renderings.html" class="nav-link active">效果图</a>
+    <a href="plans.html" class="nav-link">平面图</a>
+    <a href="elevations.html" class="nav-link">立面·剖面·屋顶</a>
+    <a href="mep.html" class="nav-link">给排水·电气</a>
+  </div>
+</header>
+
+<section class="page-hero">
+  <h1>建筑效果图</h1>
+  <p>3D 透视渲染 · 南立面渲染 · 室内俯视 — 展示建筑整体外观与空间感受</p>
+</section>
+
+<main>
+
+<section class="section fade-in">
+  <div class="section-header">
+    <div class="section-num">3D 透视渲染</div>
+    <h2 class="section-title">建筑外观透视</h2>
+    <p class="section-desc">使用 Pillow + numpy 实现真实透视投影、材质纹理与光照渲染</p>
+  </div>
+  <div class="gallery cols-2">
+    <div class="card">
+      <div class="card-img" data-viewer data-viewer-src="images/南立面透视效果图.png" data-viewer-alt="南立面透视效果图">
+        <img src="images/南立面透视效果图.png" alt="南立面透视效果图" loading="lazy">
+      </div>
+      <div class="card-info"><span class="card-name">南立面透视效果图</span><span class="card-tag">3D · 3600×2400</span></div>
+    </div>
+    <div class="card">
+      <div class="card-img" data-viewer data-viewer-src="images/东南角透视效果图.png" data-viewer-alt="东南角透视效果图">
+        <img src="images/东南角透视效果图.png" alt="东南角透视效果图" loading="lazy">
+      </div>
+      <div class="card-info"><span class="card-name">东南角透视效果图</span><span class="card-tag">3D · 3600×2400</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="section fade-in">
+  <div class="section-header">
+    <div class="section-num">matplotlib 渲染</div>
+    <h2 class="section-title">南立面渲染 · 室内俯视</h2>
+    <p class="section-desc">SVG 矢量图，支持无损缩放查看细节</p>
+  </div>
+  <div class="gallery cols-2">
+    <div class="card">
+      <div class="card-img" data-viewer data-viewer-svg="images/南立面渲染效果图.svg" data-viewer-alt="南立面渲染效果图">
+        <img src="images/南立面渲染效果图.png" alt="南立面渲染效果图" loading="lazy">
+      </div>
+      <div class="card-info"><span class="card-name">南立面渲染效果图</span><span class="card-tag">SVG</span></div>
+    </div>
+    <div class="card">
+      <div class="card-img" data-viewer data-viewer-svg="images/一层室内俯视效果图.svg" data-viewer-alt="一层室内俯视效果图">
+        <img src="images/一层室内俯视效果图.png" alt="一层室内俯视效果图" loading="lazy">
+      </div>
+      <div class="card-info"><span class="card-name">一层室内俯视效果图</span><span class="card-tag">SVG</span></div>
+    </div>
+    <div class="card">
+      <div class="card-img" data-viewer data-viewer-svg="images/二层室内俯视效果图.svg" data-viewer-alt="二层室内俯视效果图">
+        <img src="images/二层室内俯视效果图.png" alt="二层室内俯视效果图" loading="lazy">
+      </div>
+      <div class="card-info"><span class="card-name">二层室内俯视效果图</span><span class="card-tag">SVG</span></div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <p><a href="index.html">← 返回首页</a></p>
+  <p style="margin-top:.6rem">点击图纸放大 · 滚轮缩放 · 拖拽平移 · 双击切换缩放</p>
+</footer>
+
+<div class="viewer-overlay" id="viewer-overlay">
+  <div class="viewer-toolbar">
+    <span class="viewer-title"></span>
+    <div class="viewer-btns">
+      <button class="btn-fit" title="适应窗口 (0)">⊞</button>
+      <button class="btn-one" title="100% (1)">1:1</button>
+      <button class="btn-zin" title="放大 (+)">＋</button>
+      <button class="btn-zout" title="缩小 (-)">－</button>
+      <button class="btn-close" title="关闭 (Esc)">✕</button>
+    </div>
+  </div>
+  <div class="viewer-container">
+    <div class="viewer-content"></div>
+    <div class="viewer-zoom-info"></div>
+  </div>
+</div>
+
+<script src="viewer.js"></script>
+</body>
+</html>
