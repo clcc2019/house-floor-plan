@@ -2,9 +2,13 @@
 两层轻奢别墅 — 全套图纸生成（中文命名 + 分类目录）
 输出到 图纸/ 目录，按类别分文件夹
 每张图纸同时生成 DXF 源文件 + PNG 预览图
+
+所有建筑参数从 building_config.py 导入（唯一数据源），
+确保平面图↔立面图↔剖面图↔效果图的结构、尺寸、窗户位置严格一致。
 """
 
 import os
+import sys
 import math
 import ezdxf
 from ezdxf import units
@@ -16,8 +20,37 @@ import matplotlib.patches as patches
 from matplotlib.patches import Arc
 import numpy as np
 
-plt.rcParams["font.sans-serif"] = ["PingFang HK", "Hiragino Sans GB", "Heiti TC", "STHeiti", "Arial Unicode MS"]
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from building_config import (
+    BW, BH, OW, IW, BW_M, BD_M,
+    GROUND, F1H, F2H, SLAB, PARAPET, WALL_T,
+    GL, F1_FL, F1_CL, F2_FL, F2_CL, ROOF, TOP,
+    F1_X1, F1_Y0, F1_Y1, F1_NX1, F1_NX2, F1_MX1, F1_MY1,
+    F2_X1, F2_Y0, F2_Y1, F2_Y2, F2_NX1, F2_NX2, F2_NX3,
+    SOUTH_WIN, SOUTH_DOOR, NORTH_WIN, EAST_WIN, WEST_WIN,
+    SILL_STD, DARK_STONE_X,
+)
+
+W_m = BW_M; D_m = BD_M
+
+plt.rcParams["font.sans-serif"] = [
+    "Noto Sans CJK SC",        # Linux (Ubuntu/Debian)
+    "Noto Sans SC",             # Alternate Noto name
+    "WenQuanYi Micro Hei",     # Linux fallback
+    "PingFang SC",              # macOS
+    "Microsoft YaHei",          # Windows
+    "SimHei",                   # Windows fallback
+    "Arial Unicode MS",         # Cross-platform
+]
 plt.rcParams["axes.unicode_minus"] = False
+import matplotlib.font_manager as fm
+_CJK_FONT_PATH = None
+for _p in ["/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc",
+           "/usr/share/fonts/opentype/noto/NotoSansCJK-Bold.ttc"]:
+    if os.path.exists(_p):
+        _CJK_FONT_PATH = _p
+        fm.fontManager.addfont(_p)
+        break
 
 BASE = os.path.join(os.getcwd(), "图纸")
 IMG_DIR = os.path.join(os.getcwd(), "docs", "images")
@@ -42,13 +75,6 @@ C_GROUND = "#D2B48C"; C_GLASS = "#B8D4E8"
 C_WATER_SUPPLY = "#2196F3"; C_WATER_DRAIN = "#795548"; C_HOTWATER = "#FF5722"
 C_ELEC_LIGHT = "#FFC107"; C_ELEC_DOWNLIGHT = "#FFD54F"
 C_ELEC_SOCKET = "#4CAF50"; C_ELEC_SWITCH = "#FF9800"; C_ELEC_SPECIAL = "#E91E63"
-
-# ── 建筑参数 ──
-BW = 14000; BH = 11000; OW = 240; IW = 120
-W_m = 14.0; D_m = 11.0
-F1H = 3.3; F2H = 3.0; SLAB = 0.15; PARAPET = 0.9; GROUND = 0.45; WALL_T = 0.24
-GL = 0.0; F1_FL = GROUND; F1_CL = F1_FL + F1H; F2_FL = F1_CL + SLAB
-F2_CL = F2_FL + F2H; ROOF = F2_CL + SLAB; TOP = ROOF + PARAPET
 
 
 def _s(v):
@@ -291,39 +317,9 @@ class FloorPlan:
 # ══════════════════════════════════════════════
 
 def gen_floor1():
-    # ── 优化一层布局（参考 view.jpg + 网络设计经验）──
-    # 设计原则：
-    #   1. 动静分区：南面公共区(客厅/餐厅)，北面私密区(卧室/卫生间)
-    #   2. 老人房在南面，采光好，出入方便
-    #   3. 客厅+餐厅开放连通，厨房紧邻餐厅
-    #   4. 客卫在内侧，不朝正面
-    #   5. 每个房间都有合理的门和动线
-    #   6. 南面正面：大落地窗(左) + 石材大门(右)
-    #
-    # ┌──────────────────────────────────────────────┐ 北 Y=11000
-    # │  厨房(西北)     │ 客卫   │  楼梯间(东北)       │
-    # │  4.8×3.6m       │1.8×3.6 │  5.2×3.6m          │
-    # ├─────────────────┼────────┼────────────────────┤ Y1=7200
-    # │                          │                     │
-    # │  客餐厅 LDK              │  主卧1（老人房）     │
-    # │  (开放大空间)             │  带独卫              │
-    # │  9.6×5.0m                │  4.2×5.0m           │
-    # │                          │                     │
-    # ├──────────────────────────┼────────────────────┤ Y0=2200
-    # │  客厅（大落地窗朝南）      │  玄关+大门(石材门)   │
-    # │  9.6×2.0m                │  4.2×2.0m           │
-    # └──────────────────────────┴────────────────────┘ 南 Y=0
-    #   X=0               X1=9800                  X=14000
-    # 北侧分割：NX1=4800(厨房|客卫)  NX2=6600(客卫|楼梯)
-
-    X1 = 8200    # 公共区(客厅/LDK) | 私密区(主卧1/玄关/楼梯)
-    Y0 = 2200    # 南侧带顶部
-    Y1 = 7200    # 北侧功能带底部
-    NX1 = 4800   # 厨房 | 客卫
-    NX2 = 6600   # 客卫 | 楼梯间
-    # 主卧1内部分割：主卧 | 主卫1
-    MX1 = 12000  # 主卫1左边界
-    MY1 = 4200   # 主卧1内部 主卫1底部Y
+    X1 = F1_X1; Y0 = F1_Y0; Y1 = F1_Y1
+    NX1 = F1_NX1; NX2 = F1_NX2
+    MX1 = F1_MX1; MY1 = F1_MY1
 
     fills = [
         (OW, OW, X1-OW, Y0-OW),                            # 客厅
@@ -431,23 +427,8 @@ def gen_floor1():
 
 
 def gen_floor2():
-    # ── 二层布局（楼梯位置与一层对齐：X=6600~14000 北侧, Y=7200~11000）──
-    # 一层楼梯在 NX2=6600 右侧，Y1=7200~BH 北侧带
-    # 二层楼梯必须在相同位置
-    #
-    # 南面（下）：南向大阳台（全宽）
-    # 南侧带：次卧1(西) | 次卧2(东)
-    # 中间带：走廊/起居厅(全宽)
-    # 北侧带：主卧2(西) | 主卫2 | 主卧3(东) | 公卫 | 楼梯间
-
-    X1 = 4800    # 次卧1|次卧2
-    Y0 = 1500    # 阳台顶部
-    Y1 = 5200    # 南侧卧室带顶部
-    Y2 = 7200    # 中间走廊带顶部（与一层Y1对齐）
-    # 北侧分割
-    NX1 = 5800   # 主卧2|主卫2
-    NX2 = 8000   # 主卫2|主卧3
-    NX3 = 11200  # 主卧3|公卫+楼梯
+    X1 = F2_X1; Y0 = F2_Y0; Y1 = F2_Y1; Y2 = F2_Y2
+    NX1 = F2_NX1; NX2 = F2_NX2; NX3 = F2_NX3
 
     fills = [
         (OW,OW,BW-2*OW,Y0-OW),                             # 阳台
@@ -649,51 +630,20 @@ def _elev_png(title, width_m, windows, doors, filename, has_balcony=False):
 
 
 def gen_elevations():
-    # 南立面 — 一层：大落地窗(左)+石材门(右)；二层：阳台+次卧窗
-    south_win = [
-        (1.0,F1_FL+0.3,5.0,2.2,4),                          # 一层客厅超大落地窗
-        (1.2,F2_FL+0.9,2.0,1.5,2),                          # 二层次卧1阳台窗
-        (5.0,F2_FL+0.9,3.0,1.5,3),                          # 二层次卧2阳台窗
-        (9.3,F2_FL+0.9,2.0,1.5,2),                          # 二层次卧2阳台窗2
-    ]
-    south_door = [(9.5,F1_FL,1.2,2.6)]                      # 玄关石材大门
-    _elev_dxf("南立面图",W_m,south_win,south_door,"南立面图")
-    _elev_png("南立面图  South Elevation",W_m,south_win,south_door,"南立面图",has_balcony=True)
+    _elev_dxf("南立面图", W_m, SOUTH_WIN, SOUTH_DOOR, "南立面图")
+    _elev_png("南立面图  South Elevation", W_m, SOUTH_WIN, SOUTH_DOOR, "南立面图", has_balcony=True)
     print("  ✓ 南立面图 (DXF + PNG)")
 
-    # 北立面 — 一层：厨房窗+客卫窗+楼梯窗；二层：主卧2+主卫2+主卧3
-    north_win = [
-        (0.8,F1_FL+0.9,2.5,1.5,3),                          # 一层厨房北窗
-        (5.0,F1_FL+0.9,1.0,1.0,1),                          # 一层客卫北窗
-        (8.0,F1_FL+0.9,3.5,1.5,3),                          # 一层楼梯间北窗
-        (1.0,F2_FL+0.9,2.5,1.5,3),                          # 二层主卧2北窗
-        (6.1,F2_FL+0.9,1.5,1.2,2),                          # 二层主卫2北窗
-        (8.5,F2_FL+0.9,2.0,1.5,2),                          # 二层主卧3北窗
-    ]
-    _elev_dxf("北立面图",W_m,north_win,[],"北立面图")
-    _elev_png("北立面图  North Elevation",W_m,north_win,[],"北立面图")
+    _elev_dxf("北立面图", W_m, NORTH_WIN, [], "北立面图")
+    _elev_png("北立面图  North Elevation", W_m, NORTH_WIN, [], "北立面图")
     print("  ✓ 北立面图 (DXF + PNG)")
 
-    # 东立面 — 一层：主卧1窗+楼梯窗；二层：次卧2窗+主卧3窗
-    east_win = [
-        (2.5,F1_FL+0.9,3.5,1.5,3),                          # 一层主卧1东窗
-        (7.7,F1_FL+0.9,2.0,1.5,2),                          # 一层楼梯间东窗
-        (1.5,F2_FL+0.9,2.0,1.5,2),                          # 二层次卧2东窗
-        (8.5,F2_FL+0.9,2.0,1.5,2),                          # 二层主卧3东窗
-    ]
-    _elev_dxf("东立面图",D_m,east_win,[],"东立面图")
-    _elev_png("东立面图  East Elevation",D_m,east_win,[],"东立面图")
+    _elev_dxf("东立面图", D_m, EAST_WIN, [], "东立面图")
+    _elev_png("东立面图  East Elevation", D_m, EAST_WIN, [], "东立面图")
     print("  ✓ 东立面图 (DXF + PNG)")
 
-    # 西立面 — 一层：LDK大窗+厨房窗；二层：次卧1窗+主卧2窗
-    west_win = [
-        (3.0,F1_FL+0.9,3.5,1.5,3),                          # 一层LDK西窗
-        (7.7,F1_FL+0.9,2.5,1.5,3),                          # 一层厨房西窗
-        (1.5,F2_FL+0.9,2.0,1.5,2),                          # 二层次卧1西窗
-        (8.0,F2_FL+0.9,2.0,1.5,2),                          # 二层主卧2西窗
-    ]
-    _elev_dxf("西立面图",D_m,west_win,[],"西立面图")
-    _elev_png("西立面图  West Elevation",D_m,west_win,[],"西立面图")
+    _elev_dxf("西立面图", D_m, WEST_WIN, [], "西立面图")
+    _elev_png("西立面图  West Elevation", D_m, WEST_WIN, [], "西立面图")
     print("  ✓ 西立面图 (DXF + PNG)")
 
 
@@ -1094,12 +1044,8 @@ def gen_render_south():
         ax.plot([x,x+w],[y+h*0.45,y+h*0.45],color="#555",linewidth=0.4,zorder=8)
         ax.add_patch(patches.Rectangle((x-0.06,y-0.06),w+0.12,0.06,facecolor="#C8C0B0",edgecolor="#A8A098",linewidth=0.5,zorder=6))
 
-    # 一层：超大落地窗（参考view.jpg左侧大玻璃）
-    rwin(1.0,F1_FL+0.3,5.0,2.2,4)
-    # 二层窗户
-    rwin(1.2,F2_FL+0.9,2.0,1.5,2)                           # 次卧1
-    rwin(4.7,F2_FL+0.9,2.5,1.5,3)                           # 次卧2
-    rwin(10.3,F2_FL+0.9,2.0,1.5,2)                          # 书房
+    for (x, y, w, h, divs) in SOUTH_WIN:
+        rwin(x, y, w, h, divs)
 
     # 玄关石材大门（参考view.jpg右侧深色门）
     dx,dy=9.5,F1_FL; dw,dh=1.2,2.6
@@ -1253,8 +1199,8 @@ def _interior_render(title, subtitle, floor_name, rooms, furniture, walls_h, wal
 
 
 def gen_render_interior_f1():
-    """一层室内俯视效果图 — 优化布局"""
-    X1=8200; Y0=2200; Y1=7200; NX1=4800; NX2=6600; MX1=12000; MY1=4200
+    """一层室内俯视效果图"""
+    X1=F1_X1; Y0=F1_Y0; Y1=F1_Y1; NX1=F1_NX1; NX2=F1_NX2; MX1=F1_MX1; MY1=F1_MY1
 
     rooms = [
         (OW, OW, X1-OW, Y0-OW, "客厅"),
@@ -1313,9 +1259,9 @@ def gen_render_interior_f1():
 
 
 def gen_render_interior_f2():
-    """二层室内俯视效果图 — 优化布局"""
-    X1=4800; Y0=1500; Y1=5200; Y2=7200
-    NX1=5800; NX2=8000; NX3=11200
+    """二层室内俯视效果图"""
+    X1=F2_X1; Y0=F2_Y0; Y1=F2_Y1; Y2=F2_Y2
+    NX1=F2_NX1; NX2=F2_NX2; NX3=F2_NX3
     YM = Y2+IW+(BH-OW-Y2-IW)//2
 
     rooms = [

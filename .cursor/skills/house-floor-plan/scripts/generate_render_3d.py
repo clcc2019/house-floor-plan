@@ -6,11 +6,23 @@
   - 光照模型（环境光 + 方向光 + 阴影）
   - 天空、景观
 参考 view.jpg 风格：现代简约，白墙+深色线条+大面积玻璃+玻璃栏杆阳台
+
+所有建筑参数从 building_config.py 导入（唯一数据源），
+确保 3D 渲染与平面图、立面图的结构、尺寸、窗户位置严格一致。
 """
 
 import numpy as np
 from PIL import Image, ImageDraw, ImageFilter, ImageFont
-import math, os, random
+import math, os, sys, random
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from building_config import (
+    BW_M, BD_M,
+    GROUND, F1H, F2H, SLAB, PARAPET, WALL_T,
+    GL, F1_FL, F1_CL, F2_FL, F2_CL, ROOF, TOP,
+    SOUTH_WIN, SOUTH_DOOR, EAST_WIN,
+    DARK_STONE_X,
+)
 
 OUT = os.path.join(os.getcwd(), "docs", "images")
 os.makedirs(OUT, exist_ok=True)
@@ -132,12 +144,12 @@ def draw_solid_quad(draw, pts2d, color, outline=None, width=1):
     draw.polygon(poly, fill=color, outline=outline, width=width)
 
 
-# 建筑尺寸（米）
-BW = 14.0; BD = 11.0
-F1H = 3.6; F2H = 3.3; SLAB = 0.18; PARAPET = 0.6; BASE_H = 0.45
-F1_TOP = F1H; F2_BOT = F1_TOP + SLAB; F2_TOP = F2_BOT + F2H
-ROOF = F2_TOP + SLAB; TOP = ROOF + PARAPET
-RH_START = BW * 0.62; RH_EXTRA = 1.3; RH_TOP = TOP + RH_EXTRA
+# 建筑尺寸（米） — 从 building_config 统一导入
+BW = BW_M; BD = BD_M
+BASE_H = F1_FL
+F1_TOP = F1_CL
+F2_BOT = F2_FL
+F2_TOP = F2_CL
 
 
 def south_face(x0, y0, x1, y1):
@@ -209,13 +221,20 @@ def _add_glow(img, x, y, radius=25, color=(255,240,200), alpha=30):
 
 
 def _get_fonts():
-    try:
-        ft = ImageFont.truetype("/System/Library/Fonts/PingFang.ttc", 42)
-        fs = ImageFont.truetype("/System/Library/Fonts/PingFang.ttc", 20)
-    except:
-        ft = ImageFont.load_default()
-        fs = ImageFont.load_default()
-    return ft, fs
+    font_paths = [
+        "/usr/share/fonts/opentype/noto/NotoSansCJK-Bold.ttc",
+        "/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc",
+        "/usr/share/fonts/truetype/arphic/uming.ttc",
+        "/System/Library/Fonts/PingFang.ttc",
+        "C:/Windows/Fonts/msyh.ttc",
+    ]
+    for fp in font_paths:
+        if os.path.exists(fp):
+            try:
+                return ImageFont.truetype(fp, 42), ImageFont.truetype(fp, 20)
+            except Exception:
+                continue
+    return ImageFont.load_default(), ImageFont.load_default()
 
 
 # ═══════════════════════════════════════════════════════════
@@ -269,35 +288,19 @@ def generate_south_perspective():
     draw_textured_quad(img, project_quad(cam, south_face(0, ROOF, BW, TOP)),
                        make_wall_texture(600, 100, (235, 230, 220)))
     draw = ImageDraw.Draw(img)
-    # 压顶
     draw_solid_quad(draw, project_quad(cam, south_face(-0.08, TOP-0.1, BW+0.08, TOP)), (60, 56, 52))
-    # 右侧挑高
-    draw_textured_quad(img, project_quad(cam, south_face(RH_START, TOP, BW, RH_TOP)),
-                       make_wall_texture(300, 200, (238, 233, 223)))
-    draw = ImageDraw.Draw(img)
-    draw_solid_quad(draw, project_quad(cam, south_face(RH_START-0.05, RH_TOP-0.08, BW+0.05, RH_TOP)),
-                    (60, 56, 52))
 
-    # ── 窗户（优化布局：南面大落地窗左侧 + 玄关石材门右侧）──
-    # 一层：超大落地窗（客厅，X=1.0~6.0m）
-    _draw_window(cam, img, 1.0, BASE_H+0.1, 5.0, 2.4, south_face, divs_v=4)
-    # 二层窗户
-    _draw_window(cam, img, 1.2, F2_BOT+0.3, 2.0, F2H-0.6, south_face, divs_v=2)
-    _draw_window(cam, img, 5.0, F2_BOT+0.3, 3.0, F2H-0.6, south_face, divs_v=3)
-    _draw_window(cam, img, 9.3, F2_BOT+0.3, 2.0, F2H-0.6, south_face, divs_v=2)
-    # 挑高窗
-    _draw_window(cam, img, RH_START+0.4, TOP+0.2, BW-RH_START-0.8, RH_EXTRA-0.4,
-                 south_face, divs_v=4)
+    # ── 窗户 — 从 building_config.SOUTH_WIN 统一读取 ──
+    for (x, y, w, h, divs) in SOUTH_WIN:
+        _draw_window(cam, img, x, y, w, h, south_face, divs_v=divs)
 
     draw = ImageDraw.Draw(img)
 
-    # ── 右侧深色石材区域（参考view.jpg）──
-    draw_textured_quad(img, project_quad(cam, south_face(8.2, BASE_H, BW, F1_TOP)),
+    draw_textured_quad(img, project_quad(cam, south_face(DARK_STONE_X, BASE_H, BW, F1_TOP)),
                        make_dark_texture(400, 400, (50, 45, 38)))
     draw = ImageDraw.Draw(img)
 
-    # ── 大门（玄关石材门，右侧）──
-    door_x, door_w, door_h = 9.5, 1.2, 2.8
+    door_x, door_y, door_w, door_h = SOUTH_DOOR[0]
     draw_solid_quad(draw, project_quad(cam, south_face(door_x-0.1, BASE_H, door_x+door_w+0.1, BASE_H+door_h+0.1)),
                     (45, 42, 38))
     draw_textured_quad(img, project_quad(cam, south_face(door_x, BASE_H, door_x+door_w, BASE_H+door_h)),
@@ -430,11 +433,6 @@ def generate_southeast_perspective():
                        make_wall_texture(600, 80, (235, 230, 220)))
     draw = ImageDraw.Draw(img)
     draw_solid_quad(draw, project_quad(cam, south_face(-0.06, TOP-0.08, BW+0.06, TOP)), (58, 55, 50))
-    draw_textured_quad(img, project_quad(cam, south_face(RH_START, TOP, BW, RH_TOP)),
-                       make_wall_texture(300, 200, (238, 233, 223)))
-    draw = ImageDraw.Draw(img)
-    draw_solid_quad(draw, project_quad(cam, south_face(RH_START-0.05, RH_TOP-0.06, BW+0.05, RH_TOP)),
-                    (58, 55, 50))
 
     # ── 东面 ──
     draw_textured_quad(img, project_quad(cam, east_face(0, 0, BD, BASE_H)),
@@ -449,44 +447,32 @@ def generate_southeast_perspective():
                        make_wall_texture(500, 80, (225, 220, 212)))
     draw = ImageDraw.Draw(img)
     draw_solid_quad(draw, project_quad(cam, east_face(-0.05, TOP-0.08, BD+0.05, TOP)), (55, 52, 47))
-    draw_textured_quad(img, project_quad(cam, east_face(0, TOP, BD*0.4, RH_TOP)),
-                       make_wall_texture(200, 200, (230, 225, 216)))
-    draw = ImageDraw.Draw(img)
-    draw_solid_quad(draw, project_quad(cam, east_face(-0.05, RH_TOP-0.06, BD*0.4+0.05, RH_TOP)),
-                    (55, 52, 47))
 
-    # 屋顶
+    # 屋顶 (无挑高体量，平屋顶)
     draw_solid_quad(draw, project_quad(cam, roof_face(0, 0, BW, BD, TOP)), (200, 195, 185),
                     outline=(180,175,165))
-    draw_solid_quad(draw, project_quad(cam, roof_face(RH_START, 0, BW, BD*0.4, RH_TOP)),
-                    (195, 190, 180), outline=(175,170,160))
 
-    # ── 南面窗户（优化布局）──
-    _draw_window(cam, img, 1.0, BASE_H+0.1, 5.0, 2.4, south_face, divs_v=4)
-    _draw_window(cam, img, 1.2, F2_BOT+0.3, 2.0, F2H-0.6, south_face, divs_v=2)
-    _draw_window(cam, img, 5.0, F2_BOT+0.3, 3.0, F2H-0.6, south_face, divs_v=3)
-    _draw_window(cam, img, 9.3, F2_BOT+0.3, 2.0, F2H-0.6, south_face, divs_v=2)
+    # ── 南面窗户 — 从 building_config.SOUTH_WIN 统一读取 ──
+    for (x, y, w, h, divs) in SOUTH_WIN:
+        _draw_window(cam, img, x, y, w, h, south_face, divs_v=divs)
 
     # 右侧深色石材区域
-    draw_textured_quad(img, project_quad(cam, south_face(8.2, BASE_H, BW, F1_TOP)),
+    draw_textured_quad(img, project_quad(cam, south_face(DARK_STONE_X, BASE_H, BW, F1_TOP)),
                        make_dark_texture(400, 400, (50, 45, 38)))
 
-    # ── 东面窗户（主卧1窗+楼梯窗）──
+    # ── 东面窗户 — 从 building_config.EAST_WIN 统一读取 ──
     def east_face_win(z0, y0, z1, y1):
         return [(BW, y0, z0), (BW, y0, z1), (BW, y1, z1), (BW, y1, z0)]
-    # 一层：主卧1东窗(2.5~6.0m) + 楼梯间窗(7.7~9.7m)
-    _draw_window(cam, img, 2.5, 0.7, 3.5, 2.0, east_face_win, divs_v=3, glass_tint=(70,118,155))
-    _draw_window(cam, img, 7.7, 0.7, 2.0, 1.8, east_face_win, divs_v=2, glass_tint=(70,118,155))
-    # 二层：次卧2东窗(1.5~3.5m) + 主卧3东窗(8.5~10.5m)
-    _draw_window(cam, img, 1.5, F2_BOT+0.3, 2.0, F2H-0.8, east_face_win, divs_v=2, glass_tint=(70,118,155))
-    _draw_window(cam, img, 8.5, F2_BOT+0.3, 2.0, F2H-0.6, east_face_win, divs_v=2, glass_tint=(70,118,155))
+    for (x, y, w, h, divs) in EAST_WIN:
+        _draw_window(cam, img, x, y, w, h, east_face_win, divs_v=divs, glass_tint=(70,118,155))
 
     draw = ImageDraw.Draw(img)
 
-    # 大门（玄关石材门，右侧 X=9.5~10.7m）
-    draw_solid_quad(draw, project_quad(cam, south_face(9.5-0.1, BASE_H, 9.5+1.2+0.1, BASE_H+2.8+0.1)),
+    # 大门 — 从 building_config.SOUTH_DOOR 统一读取
+    door_x, door_y, door_w, door_h = SOUTH_DOOR[0]
+    draw_solid_quad(draw, project_quad(cam, south_face(door_x-0.1, BASE_H, door_x+door_w+0.1, BASE_H+door_h+0.1)),
                     (42, 40, 36))
-    draw_textured_quad(img, project_quad(cam, south_face(9.5, BASE_H, 10.7, BASE_H+2.8)),
+    draw_textured_quad(img, project_quad(cam, south_face(door_x, BASE_H, door_x+door_w, BASE_H+door_h)),
                        make_dark_texture(120, 250, (48, 43, 38)))
     draw = ImageDraw.Draw(img)
 

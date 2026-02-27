@@ -1,26 +1,41 @@
 ---
 name: house-floor-plan
-description: Generates residential floor plans (DXF + PNG) for self-built houses and villas using ezdxf and matplotlib. Use when the user mentions floor plans, house design, building layout, DXF drawings, room layout optimization, self-built house blueprints, or residential architecture drawings.
+description: Generates residential floor plans and full drawing sets (DXF + PNG + 3D renderings) for self-built houses and villas. Enforces strict cross-drawing consistency through a centralized building config. Use when the user mentions floor plans, house design, building layout, DXF drawings, room layout optimization, self-built house blueprints, or residential architecture drawings.
 ---
 
 # House Floor Plan Generator
 
-Generate professional residential floor plans as DXF (AutoCAD) + PNG (preview) files.
+Generate professional residential floor plans as DXF (AutoCAD) + PNG (preview) + 3D renderings.
+
+## Architecture: Single Source of Truth
+
+All scripts share one centralized config to guarantee cross-drawing consistency:
+
+```
+scripts/building_config.py    ← 唯一数据源 (Single Source of Truth)
+  ├── 基地尺寸 (BW/BH/OW/IW)
+  ├── 层高体系 (F1H/F2H/SLAB/PARAPET → 推导 GL/F1_FL/.../TOP)
+  ├── 平面布局 (F1_X1/F1_Y0/.../F2_NX3 — 每层房间分割坐标)
+  ├── 窗户定义 (SOUTH_WIN/NORTH_WIN/EAST_WIN/WEST_WIN — 全朝向统一)
+  └── 立面参数 (DARK_STONE_X/SOUTH_DOOR — 外观特征)
+
+scripts/generate_all.py       ← 全套图纸 (从 building_config 导入)
+scripts/generate_render_3d.py ← 3D透视渲染 (从 building_config 导入)
+```
+
+**核心原则**：修改建筑参数时，只改 `building_config.py` 一处，所有图纸自动同步。禁止在各脚本中硬编码建筑尺寸。
 
 ## Quick Start
-
-Install dependencies:
 
 ```bash
 pip install -r requirements.txt
 ```
 
-Generate floor plans using `ezdxf` for DXF output and `matplotlib` for PNG preview.
-
 **Utility scripts** (execute, don't read):
 
 | Script | Purpose |
 |--------|---------|
+| `scripts/building_config.py` | Centralized building parameters (edit this to change dimensions) |
 | `scripts/generate_all.py` | Generate full drawing set (floor plans, elevations, sections, MEP, renderings) |
 | `scripts/generate_render_3d.py` | Generate 3D perspective renderings |
 | `examples/generate_house_dxf.py` | Standalone floor plan example (DXF + PNG) |
@@ -28,8 +43,17 @@ Generate floor plans using `ezdxf` for DXF output and `matplotlib` for PNG previ
 ```bash
 python scripts/generate_all.py       # DXF → ./图纸/  PNG → ./docs/images/
 python scripts/generate_render_3d.py  # PNG → ./docs/images/
-python examples/generate_house_dxf.py # DXF+PNG → ./
 ```
+
+## Consistency Rules
+
+When modifying any drawing, follow these rules to maintain cross-drawing consistency:
+
+1. **Window positions** — Defined once in `building_config.py` as `SOUTH_WIN/NORTH_WIN/EAST_WIN/WEST_WIN`. All scripts (elevations, renderings, 3D) read from the same arrays.
+2. **Floor heights** — Derived chain: `GL → F1_FL → F1_CL → F2_FL → F2_CL → ROOF → TOP`. Never hardcode intermediate values.
+3. **Room layout** — Floor plan partition coordinates (`F1_X1`, `F2_NX3`, etc.) are defined in config. Both `generate_all.py` and 3D renderings import the same values.
+4. **No phantom volumes** — The building is a flat-roof box (ROOF + PARAPET). No raised roof volumes, attics, or mezzanines unless explicitly added to config.
+5. **East ≠ West** — East and west facades have different window layouts because the underlying rooms differ. Never mirror one side to the other.
 
 ## Design Principles
 
@@ -42,85 +66,45 @@ python examples/generate_house_dxf.py # DXF+PNG → ./
 
 ## Workflow
 
-Copy this checklist and track progress:
-
 ```
-Task Progress:
-- [ ] Step 1: Confirm requirements
-- [ ] Step 2: Zone allocation
-- [ ] Step 3: Wall layout
-- [ ] Step 4: Door placement
-- [ ] Step 5: Window placement
-- [ ] Step 6: Furniture layout
-- [ ] Step 7: Circulation check
-- [ ] Step 8: Dimension annotation
-- [ ] Step 9: Cross-drawing sync
-- [ ] Step 10: Export & validate
+- [ ] Step 1: Confirm requirements (occupants, bedrooms, plot size, floors, style)
+- [ ] Step 2: Zone allocation (ground: public + elderly; upper: private)
+- [ ] Step 3: Update building_config.py (walls, rooms, windows)
+- [ ] Step 4: Door & window placement (verify every room has access)
+- [ ] Step 5: Furniture layout (per reference.md standard sizes)
+- [ ] Step 6: Circulation check (no dead-end rooms)
+- [ ] Step 7: Dimension annotation (segmented + total)
+- [ ] Step 8: Run generate_all.py + generate_render_3d.py
+- [ ] Step 9: Cross-drawing validation (see checklist below)
 ```
-
-**Step 1: Confirm requirements**
-Gather: occupants, bedroom count, plot size (m), floors, orientation, style preference.
-
-**Step 2: Zone allocation**
-Assign functions per floor. Ground floor: public areas + elderly room. Upper floors: private bedrooms.
-
-**Step 3: Wall layout**
-Define structural grid. Exterior walls: 240mm. Interior walls: 120mm.
-
-**Step 4: Door placement**
-Every room must have a door with correct swing direction. Master bedrooms require en-suite bathroom doors.
-
-**Step 5: Window placement**
-Place windows based on orientation and ventilation needs. Bathrooms require ventilation windows.
-
-**Step 6: Furniture layout**
-Place per standard sizes from [reference.md](reference.md). Verify clearance paths.
-
-**Step 7: Circulation check**
-Simulate daily movement paths. Ensure no dead ends (rooms accessible only through another private room).
-
-**Step 8: Dimension annotation**
-Add exterior dimensions: segmented at -700mm offset, total at -1400mm offset.
-
-**Step 9: Cross-drawing sync**
-Update elevations, sections, MEP, and renderings to match any floor plan changes.
-
-**Step 10: Export & validate**
-Export DXF (AutoCAD R2010, mm units) + PNG (150dpi). Run the validation checklist below.
 
 ## Validation Checklist
 
-Before finalizing any floor plan, verify:
-
 ```
-Validation:
+Functional:
 - [ ] Every room has at least one door with correct swing direction
 - [ ] Master bedrooms have en-suite bathroom doors
 - [ ] Stairwell position matches between floors
-- [ ] No dead-end rooms (accessible only through another private room)
 - [ ] Kitchen is adjacent to dining area
-- [ ] Guest WC is not on the front facade
-- [ ] All windows provide adequate ventilation (especially bathrooms)
 - [ ] Corridor width ≥ 1.2m throughout
-- [ ] Room dimensions meet minimum area requirements
-- [ ] All dimension annotations are present
+
+Cross-drawing consistency:
+- [ ] Elevation windows match floor plan window_h/window_v positions
+- [ ] 3D renderings match elevation window layout exactly
+- [ ] No phantom roof volumes or extra building mass in renderings
+- [ ] East and west elevations reflect actual room differences
+- [ ] Section shows correct slab/parapet/stair positions
+- [ ] Building height (TOP) is identical across all drawings
 ```
 
-## Drawing Specification (Quick Reference)
+## Drawing Specification
 
-### Wall Thickness
-- **Exterior**: 240mm (`lineweight=50`)
-- **Interior**: 120mm (`lineweight=35`)
-
-### Annotation Rules
-- Room label: Chinese name (bold) + English name (gray) + dimensions (gray), centered
-- Dimensions: exterior segmented (-700mm offset) + total (-1400mm offset)
-- Info block: right side with floor/size/area/style
-- North arrow: top-left corner
+- **Exterior wall**: 240mm (`lineweight=50`), **Interior**: 120mm (`lineweight=35`)
+- **Room label**: Chinese name (bold) + English name (gray) + dimensions (gray), centered
+- **Dimensions**: exterior segmented (-700mm offset) + total (-1400mm offset)
+- **Export**: DXF (AutoCAD R2010, mm units) + PNG (150dpi)
 
 ## Additional Resources
 
-- For building code reference (GB 55031-2022), room area guidelines, color scheme, and furniture standard sizes, see [reference.md](reference.md)
-- For a complete working example (single floor plan), see [examples/generate_house_dxf.py](examples/generate_house_dxf.py)
-- For the full drawing set generator, see [scripts/generate_all.py](scripts/generate_all.py)
-- For 3D rendering, see [scripts/generate_render_3d.py](scripts/generate_render_3d.py)
+- [reference.md](reference.md) — Building code (GB 55031-2022), room area guidelines, color scheme, furniture sizes
+- [examples/generate_house_dxf.py](examples/generate_house_dxf.py) — Standalone single-floor example
