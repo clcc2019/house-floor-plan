@@ -78,13 +78,43 @@ def _s(v):
 # ══════════════════════════════════════════════
 
 _DXF_STYLE = "CJK"
-_DXF_FONT_TTF = os.path.join(os.path.dirname(os.path.abspath(__file__)), "fonts", "NotoSansSC-Subset.ttf")
+
+def _detect_cjk_font():
+    """按优先级检测系统中可用的 CJK TrueType 字体，返回 (filename, family)"""
+    candidates = [
+        ("simhei.ttf",    "SimHei"),                        # Windows 黑体
+        ("simsun.ttc",    "SimSun"),                        # Windows 宋体
+        ("msyh.ttc",      "Microsoft YaHei"),               # Windows 微软雅黑
+        ("msyhbd.ttc",    "Microsoft YaHei"),
+        ("PingFang.ttc",  "PingFang SC"),                   # macOS
+        ("STHeiti Medium.ttc", "STHeiti"),                   # macOS
+        ("NotoSansCJK-Regular.ttc", "Noto Sans CJK SC"),    # Linux
+        ("NotoSansSC-Regular.otf",  "Noto Sans SC"),        # Linux
+        ("wqy-microhei.ttc", "WenQuanYi Micro Hei"),       # Linux
+        ("uming.ttc",       "AR PL UMing CN"),              # Linux
+    ]
+    available = set()
+    for d in ["C:/Windows/Fonts",
+              "/System/Library/Fonts", "/Library/Fonts",
+              "/usr/share/fonts", "/usr/local/share/fonts",
+              os.path.expanduser("~/.local/share/fonts"),
+              os.path.expanduser("~/Library/Fonts")]:
+        if not os.path.isdir(d):
+            continue
+        for root, _, files in os.walk(d):
+            available.update(files)
+    for filename, family in candidates:
+        if filename in available:
+            return (filename, family)
+    return ("NotoSansSC-Subset.ttf", "Noto Sans CJK SC")
+
+_DXF_FONT_FILE, _DXF_FONT_FAMILY = _detect_cjk_font()
 
 def setup_layers(doc):
     if _DXF_STYLE not in doc.styles:
         style = doc.styles.new(_DXF_STYLE)
-        style.dxf.font = "NotoSansSC-Subset.ttf"
-        style.set_extended_font_data(family="Noto Sans CJK SC", italic=False, bold=False)
+        style.dxf.font = _DXF_FONT_FILE
+        style.set_extended_font_data(family=_DXF_FONT_FAMILY, italic=False, bold=False)
     layers = [
         ("WALL", BLACK), ("WALL-FILL", BLACK), ("ROOM-FILL", LIGHT_FILL),
         ("DOOR", BLACK), ("WINDOW", BLUE), ("STAIRS", GRAY), ("TEXT", BLACK),
@@ -1649,14 +1679,7 @@ if __name__ == "__main__":
     print("\n🎨 04-效果图")
     gen_render()
 
-    import shutil
-    if os.path.exists(_DXF_FONT_TTF):
-        for d in DIRS.values():
-            dst = os.path.join(d, os.path.basename(_DXF_FONT_TTF))
-            if not os.path.exists(dst):
-                shutil.copy2(_DXF_FONT_TTF, dst)
-        print("  ✓ 字体文件已复制到各图纸目录")
-
+    print(f"\n  字体: {_DXF_FONT_FAMILY} ({_DXF_FONT_FILE})")
     print("\n" + "=" * 60)
     print("  全部完成！")
     print("=" * 60)

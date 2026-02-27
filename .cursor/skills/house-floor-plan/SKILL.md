@@ -104,7 +104,7 @@ Cross-drawing consistency:
 - **Room label**: Chinese name (bold) + English name (gray) + dimensions (gray), centered
 - **Dimensions**: exterior segmented (-700mm offset) + total (-1400mm offset)
 - **Export**: DXF (AutoCAD R2010, mm units) + PNG (150dpi, 效果图200dpi)
-- **CJK Font**: 内嵌子集字体 `fonts/NotoSansSC-Subset.ttf` (265KB) + Bold (266KB)，无需依赖系统字体
+- **CJK Font**: PNG/SVG 使用内嵌子集字体 `fonts/NotoSansSC-Subset*.ttf`；DXF 自动检测系统字体（SimHei/PingFang/Noto Sans CJK SC 等）
 
 ## Drawing Quality Standards
 
